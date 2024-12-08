@@ -1,0 +1,132 @@
+// Note:
+// If the default key layout is lower case,
+// and you want to use `Shift + q` to trigger the exit event,
+// the setting should like this `exit: Some(( code: Char('Q'), modifiers: "SHIFT")),`
+// The Char should be upper case, and the modifier should be set to "SHIFT".
+//
+// Note:
+// find `KeysList` type in src/keys/key_list.rs for all possible keys.
+// every key not overwritten via the config file will use the default specified there
+(
+
+
+
+    // Global
+    tab_toggle:                Some(( code: Char('.'), modifiers: "")),
+    tab_toggle_reverse:        Some(( code: Char('k'), modifiers: "")),
+    diff_hunk_next:            Some(( code: Char('.'), modifiers: "")),
+    diff_hunk_prev:            Some(( code: Char('k'), modifiers: "")),
+    move_up:                   Some(( code: Char(','), modifiers: "")),
+    move_down:                 Some(( code: Char('h'), modifiers: "")),
+    cmd_bar_toggle:            Some(( code: Char(':'), modifiers: "")),
+    copy:                      Some(( code: Char('y'), modifiers: "")),
+    open_help:                 Some(( code: Char('-'), modifiers: "")),
+    // enter:                     Some(( code: Enter, modifiers: "")),
+    // edit_file:                 Some(( code: Char('e'), modifiers: "")),
+    tree_collapse_recursive:   Some(( code: Char(' '), modifiers: "SHIFT")),
+    tree_expand_recursive:     Some(( code: Char(' '), modifiers: "")),
+    // popup_up:                  Some(( code: Char(','), modifiers: "")),
+    // popup_down:                Some(( code: Char('h'), modifiers: "")),
+    page_down:                 Some(( code: Char('i'), modifiers: "")),
+    page_up:                   Some(( code: Char('n'), modifiers: "")),
+    // shift_up:                  Some(( code: Char(''), modifiers: "")),
+    // shift_down:                Some(( code: Char(''), modifiers: "")),
+    // open_options:              Some(( code: Char('p'), modifiers: "")),
+    // move_left:                 Some(( code: Left, modifiers: "")),
+    // move_right:                Some(( code: Right, modifiers: "")),
+    // home:                      Some(( code: Home, modifiers: "")),
+    // end:                       Some(( code: End, modifiers: "")),
+    // exit:                      Some(( code: Char('q'), modifiers: "")),
+    // exit:                      Some(( code: Char('q'), modifiers: "")),
+    // exit_popup:                Some(( code: Left, modifiers: "")),
+    // quit:                      Some(( code: Char('q'), modifiers: "")),
+
+
+    // Status
+    select_branch:             Some(( code: Char('b'), modifiers: "")),
+    view_submodules:           Some(( code: Char('s'), modifiers: "")),
+    fetch:                     Some(( code: Char('g'), modifiers: "")),
+    stage_unstage_item:        Some(( code: Char(' '), modifiers: "")),
+    status_stage_all:          Some(( code: Char(' '), modifiers: "ALT")),
+    status_reset_item:         Some(( code: Char('d'), modifiers: "")),
+    status_ignore_file:        Some(( code: Char('i'), modifiers: "")),
+    open_commit:               Some(( code: Enter, modifiers: "")),
+    undo_commit:               Some(( code: Char('u'), modifiers: "")),
+    // pull:                      Some(( code: Char('f'), modifiers: "")),
+    // push:                      Some(( code: Char('p'), modifiers: "")),
+    // force_push:                Some(( code: Char(''), modifiers: "")),
+    // toggle_workarea:           Some(( code: Char('t'), modifiers: "")),
+    // abort_merge:               Some(( code: Char(''), modifiers: "")),
+    // diff_stage_lines:          Some(( code: Char(''), modifiers: "")),
+    // diff_reset_lines:          Some(( code: Char(''), modifiers: "")),
+
+
+    // Log
+    log_tag_commit:            Some(( code: Char('v'), modifiers: "")),
+    log_mark_commit:           Some(( code: Char(' '), modifiers: "")),
+    log_checkout_commit:       Some(( code: Char('c'), modifiers: "")),
+    log_reset_commit:          Some(( code: Char('u'), modifiers: "")),
+    log_reword_commit:         Some(( code: Char('r'), modifiers: "")),
+    log_find:                  Some(( code: Char('/'), modifiers: "")),
+    tags:                      Some(( code: Char('t'), modifiers: "")),
+    compare_commits:           Some(( code: Char('?'), modifiers: "")),
+    open_file_tree:            Some(( code: Char('f'), modifiers: "")),
+    // find_commit_sha:           Some(( code: Char('z'), modifiers: "")),
+
+
+    // Files
+    file_history:              Some(( code: Char('-'), modifiers: "")),
+    blame:                     Some(( code: Char('?'), modifiers: "")),
+    file_find:                 Some(( code: Char('/'), modifiers: "")),
+    // blame:                     Some(( code: Char('b'), modifiers: "")),
+
+
+    // Stashing
+    // stashing_save:             Some(( code: Char(''), modifiers: "")),
+    // stashing_toggle_untracked: Some(( code: Char(''), modifiers: "")),
+    // stashing_toggle_index:     Some(( code: Char(''), modifiers: "")),
+
+
+    // Stashes
+    stash_open:                Some(( code: Char(' '), modifiers: "")),
+    stash_drop:                Some(( code: Char('d'), modifiers: "")),
+    // stash_apply:               Some(( code: Char('a'), modifiers: "")),
+    
+    // Branching
+    create_branch:             Some(( code: Char('b'), modifiers: "")),
+    rename_branch:             Some(( code: Char('r'), modifiers: "")),
+    delete_branch:             Some(( code: Char('d'), modifiers: "")),
+    merge_branch:              Some(( code: Char('m'), modifiers: "")),
+    rebase_branch:             Some(( code: Char('k'), modifiers: "")),
+    reset_branch:              Some(( code: Char('t'), modifiers: "")),
+    branch_find:               Some(( code: Char('/'), modifiers: "")),
+
+
+    // Submodules
+    // view_submodule_parent:     Some(( code: Char(''), modifiers: "")),
+    // update_submodule:          Some(( code: Char(''), modifiers: "")),
+
+
+    // Remotes (unimplemented)
+    add_remote:                Some(( code: Char('i'), modifiers: "")),
+    delete_remote:             Some(( code: Char('d'), modifiers: "")),
+    view_remotes:              Some(( code: Char('l'), modifiers: "")),
+    update_remote_name:        Some(( code: Char('r'), modifiers: "")),
+    update_remote_url:         Some(( code: Char('R'), modifiers: "SHIFT")),
+    
+
+    // Tags
+    // tag_annotate:              Some(( code: Char(''), modifiers: "")),
+    // select_tag:                Some(( code: Char('s'), modifiers: "")),
+    
+
+    // Commits
+    commit:                    Some(( code: Char(' '), modifiers: "ALT")),
+    commit_amend:              Some(( code: Char('a'), modifiers: "ALT")),
+    commit_history_next:       Some(( code: Char('n'), modifiers: "ALT")),
+    open_commit_editor:        Some(( code: Char('e'), modifiers: "ALT")),
+    // newline:                   Some(( code: Char(''), modifiers: "")),
+    // toggle_signoff:            Some(( code: Char(''), modifiers: "")),
+    // toggle_verify:             Some(( code: Char(''), modifiers: "")),
+
+)

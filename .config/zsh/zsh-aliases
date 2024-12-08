@@ -1,0 +1,34 @@
+#!/bin/sh
+alias zsh-update-plugins="find "$ZDOTDIR/plugins" -type d -exec test -e '{}/.git' ';' -print0 | xargs -I {} -0 git -C {} pull -q"
+alias l='less'
+
+alias ls='ls --color=auto'
+alias la='ls --color=auto -A'
+alias ll='ls --color=auto -lh'
+
+# confirm before overwriting something
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='rm -i'
+
+alias xrm='doas xbps-remove'
+alias xs='xbps-query'
+
+# gh aliases
+alias ghc='gh repo clone'
+alias ghzc='gh repo clone "$(gh s)"'
+
+alias sway='2>/dev/null 1>&2 sway' 
+alias sch='doas chmod +x'
+alias d='doas'
+alias ish='iwctl station wlp2s0 show'
+alias iss='iwctl station wlp2s0 scan'
+
+alias suk='doas sv up kmonad'
+alias sdk='doas sv down kmonad'
+
+alias usv='env SVDIR=$HOME/.service sv'
+alias sv='doas sv'
+
+alias dotfiles='/bin/git --git-dir=$HOME/devel/wip/dotfiles/ --work-tree=$HOME'
+# alias dwl="dwl -s 'foot --server <&-'"

@@ -1,0 +1,75 @@
+#!/bin/sh
+
+source "$ZDOTDIR/zsh-functions"
+source "$ZDOTDIR/zsh-exports"
+source "$ZDOTDIR/zsh-aliases"
+# zsh_add_file "zsh-exports"
+# zsh_add_file "zsh-aliases"
+
+# some useful options (man zshoptions)
+setopt extendedglob nomatch menucomplete
+setopt interactive_comments
+# setopt autocd
+stty stop undef		# Disable ctrl-s to freeze terminal.
+zle_highlight=('paste:none')
+
+
+source "$ZDOTDIR/zsh-prompt"
+# zsh_add_file "zsh-prompt"
+# beeping is annoying
+unsetopt BEEP
+
+# source $ZDOTDIR/plugins/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# completions
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+zstyle ':completion::complete:lsof:*' menu yes select
+zmodload zsh/complist
+compinit
+
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+# Colors
+autoload -Uz colors && colors
+
+# Useful Functions
+
+# Normal files to source
+source "$ZDOTDIR/zsh-vim-mode"
+source "$ZDOTDIR/zoxide-zshimple"
+# zsh_add_file "zsh-vim-mode"
+# zsh_add_file "zoxide-zshimple"
+# zsh_add_file "fzf-zsh"
+# source "$ZDOTDIR/fzf-git"
+
+# Plugins
+zsh_add_plugin "zsh-users/zsh-autosuggestions"
+zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
+zsh_add_plugin "Aloxaf/fzf-tab"
+
+# Key-bindings
+bindkey -s '^z' 'zi\n'
+bindkey -s '^x' 'ls\n'
+bindkey -s '^v' 'cd ..\n'
+bindkey -s '^[c' 'doas !!\n'
+bindkey -s '^[ ' ' | l\n'
+
+bindkey '^[[1~' beginning-of-line
+bindkey '^[[4~' end-of-line
+bindkey '^[[3~' delete-char
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
+
+# Edit line in vim with ctrl-e:
+autoload edit-command-line; zle -N edit-command-line
+bindkey '^e' edit-command-line
+
+
+zstyle ':completion:*:git-checkout:*' sort flash
+zstyle ':completion:*:descriptions:*' format '[%d]'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color=always $realpath'
+zstyle ':fzf-tab:*' switch-group ',' '.'

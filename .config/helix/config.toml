@@ -1,0 +1,359 @@
+theme = "ayu_evolve"
+# theme = "gruvbox_dark_hard"
+
+[editor]
+true-color = true
+mouse = false
+# line-number = "relative"
+bufferline = "always"
+jump-label-alphabet = "tnseriaodhcvgmkxplbfuwyzqj"
+popup-border = "none"
+file-picker.hidden = false
+# color-modes = true
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "read-only-indicator", "file-modification-indicator", "version-control"]
+right = ["diagnostics", "selections", "register", "position", "file-encoding", "total-line-numbers"]
+
+[editor.lsp]
+display-inlay-hints = true
+display-messages = true
+
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "underline"
+
+[editor.indent-guides]
+render = true
+character = "╎" # |╎⋮┆┊┋┇
+
+[editor.smart-tab]
+enable = false
+
+# [editor.gutters.line-numbers]
+# min-width = 1
+
+# [keys.select]
+# z = ["keep_primary_selection", "collapse_selection"]
+
+[keys.normal.space]
+o = ":config-open"
+l = ":config-reload"
+# g = [":new", ":insert-output TERM=ansi lazygit", ":buffer-close!", ":redraw"]
+# k = [":new", ":insert-output lf-pick", "select_all", "split_selection_on_newline", "goto_file", "goto_last_modified_file", ":buffer-close!", ":redraw"]
+
+[keys.select.space]
+o = ":config-open"
+l = ":config-reload"
+
+[keys.normal.Z]
+z = "no_op"
+b = "no_op"
+m = "no_op"
+d = "goto_next_diag"
+g = "goto_next_change"
+t = "goto_next_class"
+a = "goto_next_parameter"
+c = "goto_next_comment"
+e = "goto_next_entry"
+p = "goto_next_paragraph"
+f = "goto_next_function"
+space = "add_newline_above"
+D = "goto_prev_diag"
+G = "goto_prev_change"
+T = "goto_prev_class"
+A = "goto_prev_parameter"
+C = "goto_prev_comment"
+E = "goto_prev_entry"
+P = "goto_prev_paragraph"
+F = "goto_prev_function"
+A-space = "add_newline_below"
+
+[keys.select.Z]
+z = "normal_mode"
+b = "no_op"
+m = "no_op"
+d = "goto_next_diag"
+g = "goto_next_change"
+t = "goto_next_class"
+a = "goto_next_parameter"
+c = "goto_next_comment"
+e = "goto_next_entry"
+p = "goto_next_paragraph"
+f = "goto_next_function"
+space = "add_newline_above"
+D = "goto_prev_diag"
+G = "goto_prev_change"
+T = "goto_prev_class"
+A = "goto_prev_parameter"
+C = "goto_prev_comment"
+E = "goto_prev_entry"
+P = "goto_prev_paragraph"
+F = "goto_prev_function"
+A-space = "add_newline_below"
+
+[keys.normal.z]
+z = "no_op"
+b = "no_op"
+m = "no_op"
+d = "goto_next_diag"
+g = "goto_next_change"
+t = "goto_next_class"
+a = "goto_next_parameter"
+c = "goto_next_comment"
+e = "goto_next_entry"
+p = "goto_next_paragraph"
+f = "goto_next_function"
+space = "add_newline_above"
+D = "goto_prev_diag"
+G = "goto_prev_change"
+T = "goto_prev_class"
+A = "goto_prev_parameter"
+C = "goto_prev_comment"
+E = "goto_prev_entry"
+P = "goto_prev_paragraph"
+F = "goto_prev_function"
+A-space = "add_newline_below"
+
+[keys.select.z]
+z = "no_op"
+b = "no_op"
+m = "no_op"
+d = "goto_next_diag"
+g = "goto_next_change"
+t = "goto_next_class"
+a = "goto_next_parameter"
+c = "goto_next_comment"
+e = "goto_next_entry"
+p = "goto_next_paragraph"
+f = "goto_next_function"
+space = "add_newline_above"
+D = "goto_prev_diag"
+G = "goto_prev_change"
+T = "goto_prev_class"
+A = "goto_prev_parameter"
+C = "goto_prev_comment"
+E = "goto_prev_entry"
+P = "goto_prev_paragraph"
+F = "goto_prev_function"
+A-space = "add_newline_below"
+
+[keys.normal.g.h]
+# n = "goto_declaration"
+f = ["hsplit", "goto_file"]
+d = ["hsplit", "goto_definition"]
+y = ["hsplit", "goto_type_definition"]
+r = ["hsplit", "goto_reference"]
+i = ["hsplit", "goto_implementation"]
+n = ["hsplit", "goto_declaration"]
+'>' = ["hsplit", "goto_last_modification"]
+
+[keys.normal.g.v]
+# n = "goto_declaration"
+f = ["vsplit", "goto_file"]
+d = ["vsplit", "goto_definition"]
+y = ["vsplit", "goto_type_definition"]
+r = ["vsplit", "goto_reference"]
+i = ["vsplit", "goto_implementation"]
+n = ["vsplit", "goto_declaration"]
+'>' = ["vsplit", "goto_last_modification"]
+
+# [keys.m]
+# w = ""
+# W = ""
+# p = ""
+# t = ""
+# f = ""
+# a = ""
+# c = ""
+# f = ""
+# T = ""
+# e = ""
+# m = ""
+# g = ""
+
+[keys.normal]
+# Experimental
+C-t = ":pipe-to cat $1 > ~/.clipboard"
+C-r = ":pipe cat ~/.clipboard"
+j = "select_textobject_inner"
+
+A-c = "switch_case"
+
+A-t = ["search_selection", "global_search"]
+ret = "add_newline_below"
+A-space = "add_newline_above"
+esc = ["keep_primary_selection", "collapse_selection"]
+# "'" = ["keep_primary_selection", "collapse_selection"]
+"_" = "insert_register"
+X = "extend_line_above"
+D = "delete_selection_noyank"
+C = "change_selection_noyank"
+V = ["trim_selections", "change_selection"]
+C-s = "split_selection_on_newline"
+
+# movement
+t = "goto_word"
+home = "goto_first_nonwhitespace"
+end = "goto_line_end"
+
+
+# Navigation
+',' = "page_cursor_half_up"
+h = "page_cursor_half_down"
+k = "goto_previous_buffer"
+'.' = "goto_next_buffer"
+
+'~' = ":buffer-close"
+'[' = "jump_forward"
+']' = "jump_backward"
+'<' = [":new", "file_picker"]
+'>' = "wclose"
+
+# Window management
+A-k = "jump_view_left"
+A-h = "jump_view_down"
+'A-,' = "jump_view_up"
+# 'A-,' = "wclose"
+'A-.' = "jump_view_right"
+C-A-k = "vsplit"
+C-A-h = "hsplit"
+
+# Tree sitter navigation
+'(' = "select_prev_sibling"
+')' = "shrink_selection"
+'{' = "expand_selection"
+'}' = "select_next_sibling"
+
+[keys.select]
+# Experimental
+C-t = ":pipe-to cat $1 > ~/.clipboard"
+C-r = ":pipe cat ~/.clipboard"
+j = "select_textobject_inner"
+
+A-t = ["search_selection", "global_search"]
+t = "goto_word"
+ret = "add_newline_below"
+A-space = "add_newline_above"
+"'" = ["keep_primary_selection", "collapse_selection"]
+home = "goto_first_nonwhitespace"
+end = "goto_line_end"
+X = "extend_line_above"
+D = "delete_selection_noyank"
+C = "change_selection_noyank"
+V = ["trim_selections", "change_selection"]
+C-s = "split_selection_on_newline"
+
+# Window management
+A-n = "jump_view_left"
+A-i = "jump_view_right"
+A-e = "jump_view_down"
+A-u = "jump_view_up"
+A-o = "wclose"
+A-y = "vsplit"
+A-l = "hsplit"
+
+A-k = "jump_view_left"
+'A-.' = "jump_view_right"
+'A-,' = "wclose"
+A-h = "vsplit"
+'C-^' = "wclose"
+'C-6' = "wclose"
+
+# Navigation
+',' = "page_cursor_half_up"
+h = "page_cursor_half_down"
+k = "goto_previous_buffer"
+'.' = "goto_next_buffer"
+
+'~' = ":buffer-close"
+'[' = "jump_forward"
+']' = "jump_backward"
+'<' = [":new", "file_picker"]
+
+# Tree sitter navigation
+'(' = "select_prev_sibling"
+')' = "shrink_selection"
+'{' = "expand_selection"
+'}' = "select_next_sibling"
+
+[keys.insert]
+A-a = "delete_word_backward"
+A-r = "delete_word_forward"
+# A-r = "move_prev_word_start"
+# A-s = "move_next_word_start"
+# A-t = "delete_word_forward"
+A-space = "open_below"
+
+# Tree sitter navigation
+# C-A-u = "expand_selection"
+# C-A-e = "shrink_selection"
+# C-A-o = "select_next_sibling"
+# C-A-n = "select_prev_sibling"
+
+'C-A-k' = "delete_word_backward"
+'A-.' = "move_prev_word_start"
+'A-,' = "move_next_word_start"
+C-A-h = "delete_word_forward"
+
+
+A-n = "jump_view_left"
+A-e = "jump_view_down"
+A-i = "jump_view_right"
+A-u = "jump_view_up"
+A-o = "wclose"
+A-y = "vsplit"
+A-l = "hsplit"
+
+[keys.normal.l]
+l = "dap_launch"
+r = "dap_restart"
+b = "dap_toggle_breakpoint"
+c = "dap_continue"
+p = "dap_pause"
+i = "dap_step_in"
+o = "dap_step_out"
+n = "dap_next"
+v = "dap_variables"
+f = "dap_terminate"
+C-c = "dap_edit_log"
+C-l = "dap_edit_condition"
+e = "dap_enable_exceptions"
+E = "dap_disable_exceptions"
+
+t = "goto_word"
+home = "goto_first_nonwhitespace"
+end = "goto_line_end"
+
+',' = "page_cursor_half_up"
+h = "page_cursor_half_down"
+k = "goto_previous_buffer"
+'.' = "goto_next_buffer"
+
+[keys.normal.l.s]
+t = "dap_switch_thread"
+f = "dap_switch_stack_frame"
+
+[keys.normal.space.G]
+d = "dap_toggle_breakpoint"
+p = "dap_pause"
+f = "dap_terminate"
+
+t = "goto_word"
+home = "goto_first_nonwhitespace"
+end = "goto_line_end"
+w = "move_next_word_start"
+b = "move_prev_word_start"
+W = "move_next_long_word_start"
+B = "move_prev_long_word_start"
+up = "move_visual_line_up"
+down = "move_visual_line_down"
+left = "move_char_left"
+right = "move_char_right"
+
+',' = "page_cursor_half_up"
+h = "page_cursor_half_down"
+k = "goto_previous_buffer"
+'.' = "goto_next_buffer"
+

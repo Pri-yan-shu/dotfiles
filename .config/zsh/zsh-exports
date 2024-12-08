@@ -1,0 +1,52 @@
+#!/bin/sh
+HISTFILE="$ZDOTDIR"/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+
+echo $PATH | grep -Eq "(^|:)/sbin(:|)"     || PATH=$PATH:/sbin
+echo $PATH | grep -Eq "(^|:)/usr/sbin(:|)" || PATH=$PATH:/usr/sbin
+
+# export GOPATH=$HOME/.local/share/go
+
+export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/share/yabridge:$PATH
+
+export PATH=$HOME/.cargo/bin:$PATH
+export PATH=$HOME/.zvm/bin:$PATH
+export PATH="/home/piri/.ghcup/bin:$PATH"
+export PATH=$HOME/.local/sdk/apache-maven-3.9.9/bin:$PATH
+export PATH=$HOME/.local/sdk/jdk-21.0.5+11/bin:$PATH
+export PATH=$HOME/.local/sdk/kotlin/bin:$PATH
+export PATH=$HOME/.local/sdk/gradle-8.11.1/bin:$PATH
+# export PATH="$HOME/.cabal/bin:$PATH"
+
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+export EDITOR=/usr/local/bin/hx
+export VISUAL=/usr/local/bin/hx
+export LESSOPEN="| /usr/bin/src-hilite-lesspipe.sh %s"
+export LESSCOLOR=always
+export LESS=' -R --jump-target=".5"'
+export _ZO_EXCLUDE_DIRS="/media/*"
+
+export FZF_DEFAULT_OPTS="--layout=reverse --bind ',:jump' --no-mouse --color=border:#808080,spinner:#E6DB74,hl:#7E8E91,fg:#F8F8F2,header:#7E8E91,info:#A6E22E,pointer:#A6E22E,marker:#F92672,fg+:#F8F8F2,prompt:#F92672,hl+:#F92672"
+
+export LESS="--RAW-CONTROL-CHARS"
+export PAGER="${commands[less]:-$PAGER}"
+
+export LESS_TERMCAP_md=$(tput bold; tput setaf 4)
+export LESS_TERMCAP_me=$(tput setaf 5)
+export LESS_TERMCAP_mb=$(tput setaf 6)
+export LESS_TERMCAP_us=$(tput setaf 2)
+export LESS_TERMCAP_ue=$(tput setaf 1)
+export LESS_TERMCAP_so=$(tput smso)
+export LESS_TERMCAP_se=$(tput rmso)
+export LESS_TERMCAP_mr=$(tput setab 1)
+export LESS_TERMCAP_mh=$(tput setab 2)
+export LESS_TERMCAP_ZN=$(tput setab 4)
+export LESS_TERMCAP_ZV=$(tput setab 5)
+export LESS_TERMCAP_ZO=$(tput setab 6)
+export LESS_TERMCAP_ZW=$(tput setab 7)
+
+# export LESS_TERMCAP_me=$(tput sgr0)
+# export LESS_TERMCAP_mb=$(tput blink)
+# export LESS_TERMCAP_ue=$(tput sgr0)

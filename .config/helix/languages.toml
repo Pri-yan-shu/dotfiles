@@ -1,0 +1,119 @@
+[[language]]
+name = "html"
+language-servers = [ "vscode-html-language-server", "tailwindcss-ls"]
+
+[[language]]
+name = "css"
+language-servers = [ "vscode-css-language-server", "tailwindcss-ls"]
+
+[[language]]
+name = "python"
+language-servers = [ "pyright" ]
+
+# [[language]]
+# name = "c-sharp"
+# language-servers = [ "csharp-ls" ]
+
+[[language]]
+name = "c"
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "java"
+indent = { tab-width = 4, unit = "    " }
+roots = ["pom.xml", "build.gradle"]
+# language-servers = [ "jdtls" ]
+
+[[language]]
+name = "kotlin"
+# diagnostics = { command = "ktlint", args = ["--reporter=plain", "--stdin"] }
+auto-format = true
+formatter = { command = "ktfmt", args = ["--kotlinlang-style"] }
+# formatter = { command = "ktlint", args = ["-F", "--stdin"] }
+# formatter = { command = "ktlint", args = ["--stdin", "--format"]}
+
+[[language]]
+name = "latex"
+# config.texlab.auxDirectory = "build"
+[language-server.texlab]
+command = "texlab"
+
+[language-server.texlab.config]
+auxDirectory = "build"
+
+
+[language-server.texlab.config.chktex]
+onOpenAndSave = true
+onEdit = true
+
+[language-server.texlab.config.forwardSearch]
+executable = "zathura"
+args = ["--syntex-forward", "%l:%c:%f", "%p"]
+
+# executable = "okular"
+# args = ["--:nique", "file:%p#src:%l%f"]
+
+[language-server.texlab.config.build]
+forwardSearchAfter = true
+onSave = true
+
+# executable = "latexmk"
+# args = [
+#   "-pdf",
+#   "-interaction=nonstopmode",
+#   "synctec=1",
+#   "-shell-escape",
+#   "-output-directory=build",
+#   "%f"
+# ]
+
+executable = "tectonic"
+args = [
+  "-X",
+  "compile",
+  "%f",
+  "--synctex",
+  "--keep-logs",
+  "--keep-intermediates",
+  "--outdir=build",
+  "-Zshell-escape",
+]
+
+# [[language]]
+# name = "glsl"
+# language-servers = [ "glsl_analyzer"]
+
+[[language]]
+name = "glsl"
+# scope = "source.glsl"
+# file-types = ["glsl", "vert", "tesc", "tese", "geom", "frag", "comp" ]
+# roots = []
+# comment-token = "//"
+# indent = { tab-width = 4, unit = "    " }
+# injection-regex = "glsl"
+# language-servers = [ "glslls"]
+language-servers = [ "glsl_analyzer"]
+# language-servers = { command = "glslls", args = ["--stdin", "-v", "-l", "/tmp/glslls.log"] }
+# language-servers = [ "glslls --stdin -v -l /tmp/glslls.log" ]
+# language-servers = ["glslls"]
+# [language-server.glslls]
+# command = "glslls"
+# args = [ "--stdin" ]
+
+[language-server.glsl_analyzer]
+command = "glsl_analyzer"
+
+[[language]]
+name = "hlsl"
+scope = "source.hlsl"
+file-types = ["hlsl", "vert", "tesc", "tese", "geom", "frag", "comp" ]
+language-servers = [ "ShaderTools.LanguageServer"]
+# language-servers = [ "glsl_analyzer"]
+
+# [[language]]
+# name = "rust"
+# language-servers = ["rust-analyzer"]
+# [language_server.rust-analyzer]
+# command = "rust-analyzer"
+# [language_server.rust-analyzer.procMacro]
+# enable = false
