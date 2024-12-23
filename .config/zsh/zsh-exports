@@ -13,12 +13,14 @@ export PATH=$HOME/.local/share/yabridge:$PATH
 
 export PATH=$HOME/.cargo/bin:$PATH
 export PATH=$HOME/.zvm/bin:$PATH
-export PATH="/home/piri/.ghcup/bin:$PATH"
+export PATH=$HOME/.ghcup/bin:$PATH
+export PATH=$HOME/.cabal/bin:$PATH
+export PATH=$HOME/.juliaup/bin:$PATH
+
 export PATH=$HOME/.local/sdk/apache-maven-3.9.9/bin:$PATH
 export PATH=$HOME/.local/sdk/jdk-21.0.5+11/bin:$PATH
 export PATH=$HOME/.local/sdk/kotlin/bin:$PATH
 export PATH=$HOME/.local/sdk/gradle-8.11.1/bin:$PATH
-# export PATH="$HOME/.cabal/bin:$PATH"
 
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export EDITOR=/usr/local/bin/hx

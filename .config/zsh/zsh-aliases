@@ -11,11 +11,12 @@ alias cp="cp -i"
 alias mv='mv -i'
 alias rm='rm -i'
 
+alias di='doas xbps-install'
 alias xrm='doas xbps-remove'
 alias xs='xbps-query'
 
 # gh aliases
-alias ghc='gh repo clone'
+alias grc='gh repo clone'
 alias ghzc='gh repo clone "$(gh s)"'
 
 alias sway='2>/dev/null 1>&2 sway' 
@@ -31,4 +32,4 @@ alias usv='env SVDIR=$HOME/.service sv'
 alias sv='doas sv'
 
 alias dotfiles='/bin/git --git-dir=$HOME/devel/wip/dotfiles/ --work-tree=$HOME'
-# alias dwl="dwl -s 'foot --server <&-'"
+alias pid='ps --no-headers o pid -C'

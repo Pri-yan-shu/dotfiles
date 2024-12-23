@@ -3,6 +3,7 @@
 source "$ZDOTDIR/zsh-functions"
 source "$ZDOTDIR/zsh-exports"
 source "$ZDOTDIR/zsh-aliases"
+# source "$ZDOTDIR/completion.zsh"
 # zsh_add_file "zsh-exports"
 # zsh_add_file "zsh-aliases"
 
@@ -48,7 +49,12 @@ source "$ZDOTDIR/zoxide-zshimple"
 # Plugins
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
+zsh_add_plugin "zsh-users/zsh-completions"
 zsh_add_plugin "Aloxaf/fzf-tab"
+# zsh_add_plugin "aperezdc/zsh-fzy"
+
+# source "$ZDOTDIR/fzy"
+# source "$ZDOTDIR/zsh-fzy"
 
 # Key-bindings
 bindkey -s '^z' 'zi\n'
@@ -56,9 +62,13 @@ bindkey -s '^x' 'ls\n'
 bindkey -s '^v' 'cd ..\n'
 bindkey -s '^[c' 'doas !!\n'
 bindkey -s '^[ ' ' | l\n'
+bindkey -s '\e^A' '$(!!)'
 
+# bindkey '^x' zaw
 bindkey '^[[1~' beginning-of-line
 bindkey '^[[4~' end-of-line
+bindkey "^[[H" beginning-of-line # Up
+bindkey "^[[F" end-of-line # Down
 bindkey '^[[3~' delete-char
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
@@ -73,3 +83,19 @@ zstyle ':completion:*:descriptions:*' format '[%d]'
 zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group ',' '.'
+
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$ZDOTDIR/.zcompcache"
+
+# zstyle ':completion:*' menu select
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}' 'r:|[._-]=**'
+# autoload -Uz select-word-style
+# zstyle ':completion:*' menu select
+# bindkey '^[[Z' menu-select  # Use Shift+Tab to activate menu-select
+
+# setopt NO_CASE_GLOB
+# setopt EXTENDED_GLOB
+# zstyle ':completion:*' matcher-list '' 'l:|=* r:|=*'
+# zstyle ':completion:*' completer _complete _approximate
+# zstyle ':completion:*:approximate:*' max-errors 2 numeric
+
