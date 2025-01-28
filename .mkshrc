@@ -1,0 +1,114 @@
+PS1=$'\E[01;32m$(basename "$PWD")$([ $? == 0 ] && printf "\E[36m" || printf "\E[35m") \E[0m \E[5 q'
+
+HISTFILE=~/.history
+HISTSIZE=100000
+SAVEHIST=100000
+
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
+
+function path {
+	PATH=$HOME/$1:$PATH
+}
+
+path .local/bin
+path .local/share/yabridge
+path .local/wine/bin
+
+path .local/sdk/apache-maven-3.9.9/bin
+path .local/sdk/jdk-21.0.5+11/bin
+path .local/sdk/kotlin/bin
+path .local/sdk/gradle-8.11.1/bin
+
+path .cargo/bin
+path .zvm/bin
+path .ghcup/bin
+path .cabal/bin
+path .juliaup/bin
+path devel/build/faust/tools/faust2appls
+
+function __cd {
+    if builtin cd "$@"; then
+        zoxide add "$(pwd)" >/dev/null 2>&1
+        return 0
+    else
+        return 1
+    fi
+}
+
+function md {
+	mkdir -p "$@" && cd -P "$@"
+}
+
+function k {
+	if [ -z $(kak -l | grep $(basename $PWD)) ]; then
+		kak -s $(basename $PWD) $@
+	else
+		kak -c $(basename $PWD) $@
+	fi
+}
+
+function z {
+	result=$(command zoxide query -l | fzy -l4 -c2) && $@ "${result}"
+}
+
+bind '^[[A'="search-history-up"
+bind '^[[B'="search-history-down"
+
+bind -m '^Z'='zcd^M'
+bind -m '^X'='ls^M'
+bind -m '^V'='cd ..^M'
+bind -m '^[ '=' | l^M'
+bind -m '^[[B'='^I'
+bind -m '/'='/^I'
+
+alias zcd='z __cd'
+alias cd='__cd'
+alias l='less'
+alias ls='ls --color=auto'
+alias la='ls --color=auto -A'
+alias ll='ls --color=auto -lh'
+alias cp="cp -i"
+alias mv='mv -i'
+alias rm='rm -i'
+alias di='doas xbps-install'
+alias xrm='doas xbps-remove'
+alias xs='xbps-query'
+alias grc='gh repo clone'
+alias ghzc='gh repo clone "$(gh s)"'
+alias chx='chmod +x'
+alias d='doas'
+alias ish='iwctl station wlp2s0 show'
+alias iss='iwctl station wlp2s0 scan'
+alias usv='env SVDIR=$HOME/.service sv'
+alias sv='doas sv'
+alias dotfiles='/bin/git --git-dir=$HOME/devel/wip/dotfiles/ --work-tree=$HOME'
+alias pid='ps --no-headers o pid -C'
+alias e='[ -z $(kak -l | grep $USER) ] && kak -s $USER || kak -c $USER'
+alias winewl='env -u DISPLAY wine'
+alias li='lv2info $(lv2ls | fzy)'
+
+alias -d u=/usr
+alias -d us=~u/share
+alias -d ui=~u/include
+alias -d ub=~u/bin
+alias -d mhp=/mnt/home/Piriyan
+alias -d e=/etc
+alias -d es=~e/sv
+alias -d pow=/sys/class/power_supply/BAT0/capacity
+alias -d c=~/.config
+alias -d l=~/.local
+alias -d lb=~l/bin
+alias -d ls=~l/share
+alias -d d=~/devel
+alias -d db=~d/build
+alias -d dr=~d/read
+alias -d dw=~d/wip
+alias -d f=~/files
+alias -d ft=~f/torrents
+alias -d g=~/games
+alias -d m=~/media
+alias -d mm=~m/mewsic
+alias -d p=~/programs
+alias -d r=~/ref
+alias -d rd=~r/dev
+alias -d ra=~r/acads

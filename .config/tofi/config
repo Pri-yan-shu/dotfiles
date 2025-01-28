@@ -1,0 +1,25 @@
+width = 100%
+#width = 94%
+height = 10%
+#height = 100%
+border-width = 0
+outline-width = 0
+padding-left = 3%
+padding-right = 0%
+padding-top = 3%
+result-spacing = 75
+num-results = 4
+#font = /home/piri/.local/share/fonts/JetBrains/JetBrainsMonoNL-Regular.ttf
+font-size=32
+background-color = #000F
+#text-color = #7AFF
+#selection-color = #5CFF
+selection-color = #3aFF
+
+hint-font = false
+horizontal = true
+ascii-input = true
+late-keyboard-init = true
+prompt-text = ""
+min-input-width = 175
+

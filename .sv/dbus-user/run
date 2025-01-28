@@ -1,0 +1,3 @@
+#!/bin/sh
+exec dbus-daemon --session --nofork --address=$DBUS_SESSION_BUS_ADDRESS
+# exec dbus-daemon --session --nofork --address=unix:path=/run/user/1000/bus
