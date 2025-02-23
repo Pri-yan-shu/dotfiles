@@ -36,10 +36,11 @@
   fun  (layer-toggle function) ;; Bind 'fun' to the Function Layer
   sym  (layer-toggle symbols) ;; Bind 'sym' to Symbols Layer
   num  (layer-toggle numbers) ;; Bind 'num' to Numbers Layer
-  cnt  (layer-toggle control)
   shit (around-when-alone @ls_s (layer-toggle shift))
 
-  cntb (tap-next-press A-y @cnt)
+  cntb (tap-next-press A-y (layer-toggle control))
+  escb (tap-next-press esc (layer-toggle escape))
+  numb (tap-next-press A-; (layer-toggle numbers))
 )
 
 (defalias
@@ -51,8 +52,8 @@
 )
 
 (deflayer colemak-dh-sp
-  tab      q     w     f     p     b     [     j     l     u     y     '     \     ;
-  @num     a     r     s     t     g     ]     m     n     e     i     o     esc
+  A-]      q     w     f     p     b     [     j     l     u     y     '     \     KeySleep
+  @numb     a     r     s     t     g     ]     m     n     e     i     o     @escb
   z        x     c     d     v     '     /     k     h     ,     .     @cntb
   lctl     lalt  @ext              @shit             spc   @sym
 )
@@ -81,9 +82,16 @@
 
 (deflayer numbers
   _        C-A-q C-A-w C-A-f C-A-p C-A-b _     =     7     8     9     =     _     _
-  _        @nalt @nmet @nsft @nctl @la_s _     *     4     5     6     \_    _
+  _        @nalt @nmet @nsft @nctl C-A-g _     *     4     5     6     \_    _
   A-z      A-x   A-c   A-d   A-v   =     /     0     1     2     3     _
   _        _     A--               _                 A-spc _
+)
+
+(deflayer escape
+  _        _     _     _     _     _     _     _     M-7 M-8 M-9 M-' _     _
+  _        _     _     _     _     _     _     _     M-4 M-5 M-6 M-o _ 
+  _        _     _     _     _     _     _     M-0 M-1 M-2 M-3 _
+  _        _     _                 _                 _     _    
 )
 
 (deflayer control

@@ -1,4 +1,4 @@
-PS1=$'\E[01;32m$(basename "$PWD")$([ $? == 0 ] && printf "\E[36m" || printf "\E[35m") \E[0m \E[5 q'
+PS1=$'\E\[01;30m\E\[$(($? > 0 ? 45 : 42))m${PWD##*/}\E\[7m\E\[0m \E\[5 q'
 
 HISTFILE=~/.history
 HISTSIZE=100000
@@ -6,9 +6,13 @@ SAVEHIST=100000
 
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 
-function path {
+path() {
 	PATH=$HOME/$1:$PATH
 }
+
+# PATH=/opt/busybox:$PATH
+export CPLUS_INCLUDE_PATH=~/.local/include:$CPLUS_INCLUDE_PATH
+export FAUSTINC=~/.local/include/faust
 
 path .local/bin
 path .local/share/yabridge
@@ -18,16 +22,17 @@ path .local/sdk/apache-maven-3.9.9/bin
 path .local/sdk/jdk-21.0.5+11/bin
 path .local/sdk/kotlin/bin
 path .local/sdk/gradle-8.11.1/bin
+path .local/bin/faust
 
 path .cargo/bin
 path .zvm/bin
 path .ghcup/bin
-path .cabal/bin
+# path .cabal/bin
 path .juliaup/bin
 path devel/build/faust/tools/faust2appls
 
-function __cd {
-    if builtin cd "$@"; then
+__cd(){
+    if \builtin cd "$@"; then
         zoxide add "$(pwd)" >/dev/null 2>&1
         return 0
     else
@@ -35,11 +40,11 @@ function __cd {
     fi
 }
 
-function md {
+md() {
 	mkdir -p "$@" && cd -P "$@"
 }
 
-function k {
+k() {
 	if [ -z $(kak -l | grep $(basename $PWD)) ]; then
 		kak -s $(basename $PWD) $@
 	else
@@ -47,7 +52,7 @@ function k {
 	fi
 }
 
-function z {
+z() {
 	result=$(command zoxide query -l | fzy -l4 -c2) && $@ "${result}"
 }
 
@@ -57,9 +62,9 @@ bind '^[[B'="search-history-down"
 bind -m '^Z'='zcd^M'
 bind -m '^X'='ls^M'
 bind -m '^V'='cd ..^M'
-bind -m '^[ '=' | l^M'
 bind -m '^[[B'='^I'
 bind -m '/'='/^I'
+# bind -m '^[ '=' | l^M'
 
 alias zcd='z __cd'
 alias cd='__cd'
@@ -98,6 +103,8 @@ alias -d pow=/sys/class/power_supply/BAT0/capacity
 alias -d c=~/.config
 alias -d l=~/.local
 alias -d lb=~l/bin
+alias -d li=~l/include
+alias -d ll=~l/lib
 alias -d ls=~l/share
 alias -d d=~/devel
 alias -d db=~d/build

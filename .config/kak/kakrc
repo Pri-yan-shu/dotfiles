@@ -1,57 +1,45 @@
-# OPTIONS
-set-option global ui_options terminal_assistant=none terminal_enable_mouse=false terminal_info_max_width=90 terminal_status_on_top=true
+set-option global ui_options terminal_assistant=none terminal_enable_mouse=false terminal_info_max_width=90 terminal_status_on_top=true terminal_padding_char=▏░▒▓
 set-option global tabstop 4
 set-option global indentwidth 0
 set-option global grepcmd 'rg --column'
-set-option global modelinefmt '%val{bufname} {{mode_info}} %val{session}'
+set-option global scrolloff 10,0
+set-option global startup_info_version 20350518
 colorscheme mymonokai
 
-# PLUGINS
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
-plug "andreyorst/plug.kak" noload
-# plug "evanrelf/byline.kak" config %{ require-module "byline" } \
-# plug "danr/kakoune-easymotion" \
-# plug "alexherbo2/auto-pairs.kak" config %{ eval %{enable-auto-pairs} } \
-# plug "lenormf/kakoune-extra" \
-plug-chain "hadronized/swiper.kak" \
-plug "Delapouite/kakoune-auto-percent" \
-plug "alexherbo2/kakoune.cr" \
+plug-chain "occivink/kakoune-sudo-write" \
+plug "andreyorst/plug.kak" noload \
 plug "andreyorst/pmanage.kak" \
 plug "andreyorst/kakoune-snippet-collection" \
 plug "occivink/kakoune-find" \
 plug "occivink/kakoune-snippets" \
 plug "occivink/kakoune-phantom-selection" \
-plug "occivink/kakoune-sudo-write" \
-plug "occivink/kakoune-gdb" config %{ eval %{gdb-enable-autojump} } \
+plug "eraserhd/kak-ansi" \
+plug "occivink/kakoune-gdb" config %{ evaluate-commands %{gdb-enable-autojump} } \
 plug "anhsirk0/kakoune-themes" theme \
 plug "leira/base16-kakoune" theme \
 plug chambln/kakoune-kit config %{
-    map global user g ': git status -bs<ret>' -docstring 'git status'
-    hook global WinSetOption filetype=git-status %{
-        map window normal c ': git commit --verbose '
-        map window normal l ': git log --oneline --graph -- <c-x>f'
-        map window normal d ': -- %val{selections}<a-!><home> git diff '
-        map window normal D ': -- %val{selections}<a-!><home> git diff --cached '
-        map window normal a ': -- %val{selections}<a-!><home> git add '
-        map window normal A ': -- %val{selections}<a-!><home> terminal git add -p '
-        map window normal r ': -- %val{selections}<a-!><home> git reset '
-        map window normal R ': -- %val{selections}<a-!><home> terminal git reset -p '
-        map window normal o ': -- %val{selections}<a-!><home> git checkout '
-    }
-    hook global WinSetOption filetype=git-log %{
-        map window normal d     ': %val{selections}<a-!><home> git diff '
-        map window normal <ret> ': %val{selections}<a-!><home> git show '
-        map window normal r     ': %val{selections}<a-!><home> git reset '
-        map window normal R     ': %val{selections}<a-!><home> terminal git reset -p '
-        map window normal o     ': %val{selections}<a-!><home> git checkout '
-    }
+	map global user g ': git status -bs<ret>' -docstring 'git status'
+	hook global WinSetOption filetype=git-status %{
+		map window normal c ': git commit --verbose '
+		map window normal l ': git log --oneline --graph -- <c-x>f'
+		map window normal d ': -- %val{selections}<a-!><home> git diff '
+		map window normal D ': -- %val{selections}<a-!><home> git diff --cached '
+		map window normal a ': -- %val{selections}<a-!><home> git add '
+		map window normal A ': -- %val{selections}<a-!><home> terminal git add -p '
+		map window normal r ': -- %val{selections}<a-!><home> git reset '
+		map window normal R ': -- %val{selections}<a-!><home> terminal git reset -p '
+		map window normal o ': -- %val{selections}<a-!><home> git checkout '
+	}
+	hook global WinSetOption filetype=git-log %{
+		map window normal d ': %val{selections}<a-!><home> git diff '
+		map window normal <ret> ': %val{selections}<a-!><home> git show '
+		map window normal r	 ': %val{selections}<a-!><home> git reset '
+		map window normal R	 ': %val{selections}<a-!><home> terminal git reset -p '
+		map window normal o	 ': %val{selections}<a-!><home> git checkout '
+	}
 }
-# eval %sh{ kak-tree-sitter -dks --init $kak_session }
 
-# SNIPPETS
-# set-option -add global snippets 'snip8' 'trig8' %< snippets-insert %<for (${}; ${}; ${}) {$n	$$${}$n}> >
-
-# MAP
 map global normal <.> :bn<ret>
 map global normal <k> :bp<ret>
 map global normal <,> <c-u>
@@ -60,43 +48,52 @@ map global normal <[> <c-i>
 map global normal <]> <c-o>
 map global normal <(> <[>
 map global normal <)> <]>
-map global normal <`> <c-i>
-map global normal <@> <c-o>
 map global normal <esc> ";,"
 map global normal <c-d> ":comment-line<ret>"
 map global normal <a-esc> ":db<ret>"
-map global normal <home> "<home>Gi"
 map global normal <quote> <dquote>
-map global normal e <a-a>
+map global normal E <a-a>
+map global normal e <a-i>
+map global object e w
+map global object E <a-w>
+map global normal <c-up> '|printf "%d\n" $(($kak_selection + 1))<ret>'
+map global normal <c-down> '|printf "%d\n" $(($kak_selection - 1))<ret>'
+map global normal m lm
+map global normal M m
 
-map global user a "<a-a>"
-map global user q ":db<ret>:q<ret>"
-map global user i '<a-a>w:ctags-funcinfo <ret>'
-map global user s ':ctags-search '
-map global user S '<a-a>w:ctags-search<ret>'
+map -docstring "ctags" global user i '<a-a>w:ctags-funcinfo <ret>'
+map -docstring "ctags" global user s ':ctags-search '
+map -docstring "ctags" global user S '<a-a>w:ctags-search<ret>'
+
 map global user z ':z '
-map global user b ':b '
 map global user m ':man '
-map global user u ':firefox<ret>'
-
-map global user <(> ':surround-nest ( )<ret>'
-map global user <{> ':surround-nest { }<ret>'
-map global user <[> ':surround-nest [ ]<ret>'
-map global user <lt> ':surround-nest <lt> <gt><ret>'
-map global user <)> ':surround-delete-sub )<ret>'
-map global user <}> ':surround-delete-sub }<ret>'
-map global user <]> ':surround-delete-sub ]<ret>'
-map global user <gt> ':surround-delete-sub <gt><ret>'
-map global user <quote> ":surround-sym<ret>"
-map global user <dquote> ':surround-delete<ret>'
-
-declare-user-mode cscope
-map global cscope s ':cscope-search 0<ret>' 
-
+map global user u :firefox<ret>
 map global user o ":edit ~/.config/kak/kakrc<ret>"
-map global user r ':surround-replace<ret>'
+map global user r :surround-replace<ret>
 map global user D ":b *debug*<ret>"
-map global user d ":doc "
+map global user d ':doc '
+map global user c ':cmd '
+map global user s ': enter-user-mode shell<ret>'
+
+# map global user e ": snippets-menu<ret>"
+map -docstring "clipboard" global user Y "<a-|>wl-copy -p >/dev/null 2>&1 &<ret>"
+map -docstring "clipboard" global user y "<a-|>wl-copy >/dev/null 2>&1 &<ret>"
+map -docstring "clipboard" global user p "!wl-paste -n<ret>"
+map -docstring "clipboard" global user P "!wl-paste -n -p<ret>"
+map global user q ":phantom-cycle<ret>"
+
+
+map -docstring "surround add" global user <(> ':surround-nest ( )<ret>'
+map -docstring "surround add" global user <{> ':surround-nest { }<ret>'
+map -docstring "surround add" global user <[> ':surround-nest [ ]<ret>'
+map -docstring "surround add" global user <lt> ':surround-nest <lt> <gt><ret>'
+map -docstring "surround add" global user <quote> ":surround-sym<ret>"
+map -docstring "surround rm" global user <)> ':surround-delete<ret>'
+map -docstring "surround rm" global user <}> ':surround-delete<ret>'
+map -docstring "surround rm" global user <]> ':surround-delete<ret>'
+map -docstring "surround rm" global user <gt> ':surround-delete<ret>'
+map -docstring "surround rm" global user <dquote> ':surround-delete<ret>'
+
 
 map global prompt <up> <s-tab>
 map global prompt <down> <tab>
@@ -134,6 +131,10 @@ map global gdb <pagedown> ":gdb-backtrace-down<ret>"
 map global normal j ":enter-user-mode gdb<ret>"
 map global normal J ":enter-user-mode -lock gdb<ret>"
 
+declare-user-mode web
+map global web y ": pandoc-web https://inv.nadeko.net/search?q="
+map global user w ": enter-user-mode web<ret>"
+
 map global normal l ':enter-user-mode lsp<ret>'
 map global object a '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
 map global object <a-a> '<a-semicolon>lsp-object<ret>' -docstring 'LSP any symbol'
@@ -142,153 +143,58 @@ map global object t '<a-semicolon>lsp-object Class Interface Struct<ret>' -docst
 map global object d '<a-semicolon>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
 map global object D '<a-semicolon>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
-map -docstring "xml tag objet" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
+map -docstring "xml tag object" global object t %{c<lt>([\w.]+)\b[^>]*?(?<lt>!/)>,<lt>/([\w.]+)\b[^>]*?(?<lt>!/)><ret>}
+map -docstring "markdown links" global object m %{c\[.*?\]\(,\)<ret>}
+map -docstring "markdown links" global object s <esc>/\[(.*?)\]\((.*?)\)<ret>
 
-map global user e ": snippets-menu<ret>"
-map global user Y "<a-|>wl-copy -p >/dev/null 2>&1 &<ret>"
-map global user y "<a-|>wl-copy >/dev/null 2>&1 &<ret>"
-map global user p "!wl-paste -n<ret>"
-map global user P "!wl-paste -n -p<ret>"
-map global user q ":phantom-cycle<ret>"
-
-# map global normal f     ": phantom-selection-add-selection<ret>"
-# map global normal F     ": phantom-selection-select-all; phantom-selection-clear<ret>"
-# map global normal <pageup> ": phantom-selection-iterate-prev<ret>"
-# map global normal <pagedown> ": phantom-selection-iterate-next<ret>"
-# map global normal <s-pageup> "<esc>: phantom-selection-select-all; phantom-selection-clear<ret>i"
-# map global normal <s-pagedown> "<esc>: phantom-selection-add-selection<ret>i"
-
-# map global insert <pageup> "<esc>: phantom-selection-iterate-prev<ret>i"
-# map global insert <pagedown> "<esc>: phantom-selection-iterate-next<ret>i"
-# map global insert <s-pageup> "<esc>: phantom-selection-select-all; phantom-selection-clear<ret>i"
-# map global insert <s-pagedown> "<esc>: phantom-selection-add-selection<ret>i"
-
-# eval %sh{kak-lsp}
-# lsp-enable
-
-# define-command shell-eval %{
-#     nop %sh{
-#         eval "$kak_reg_dot"
-#     }
-# }
-
-# CONFIG
-
-# hook global WinSetOption filetype=<language> %{
-#   hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
-#   hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
-#   hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
-#   hook -once -always window WinSetOption filetype=.* %{
-#     remove-hooks window semantic-tokens
-#   }
-# }
-
-# hook global BufSetOption "filetype=%opt{files_browse_buffer}" %{
-#     map buffer normal '<ret>' ': files-cd<ret>'
-#     map buffer normal '<backspace>' ': files-cd-parent<ret>'
-#     map buffer normal 'm' ": files-add-entry-to-selection<ret>"
-#     map buffer normal 'M' ": files-add-cwd-to-selection<ret>"
-#     map buffer normal '.' ": files-toggle-show_hidden<ret>"
-#     map buffer normal '\' ": files-toggle-long_format<ret>"
-#     map buffer normal 'r' ": files-redraw-browser<ret>"
-#     map buffer normal 'S' ": files-focus-selections<ret>"
-#     map buffer normal 't' ": files-open-in-terminal<ret>"
-# }
-
-# hook global BufSetOption "filetype=%opt{files_selection_buffer}" %{
-#     map buffer normal <ret> ': shell-eval<ret>'
-# }
-
-# COMMANDS
-
-declare-option int node_id
-define-command -params 1 pw-setparam %{
-	evaluate-commands %{
-		set-option window node_id %arg{1}
-		cmd pw-params %arg{1} -c
-		map -docstring "testing" buffer user <ret> %{ 
-			# exec 'x'
-			exec %{!pw-cli set-param 36 Props "{ params = ["lv2:wet", 1] }" }
-			# eval %sh{ pw-cli set-param 36 Props "{ params = ["lv2:wet", 1] }" }
-			# eval %sh{ pw-cli set-param $kak_opt_node_id Props "{ params = $kak_selection }" }
-		}
+define-command -params 1.. fzf %{
+	prompt -shell-script-candidates "%arg{1}" "%arg{2}: " %{
+		set-register p %val{text}
 	}
 }
 
-define-command -override -hidden close-pair -params 1 %{
-  try %{
-    execute-keys -draft "<space>;<a-k>\Q%arg{1}<ret>"
-    execute-keys '<a-;>l'
-  } catch %{
-    execute-keys -with-hooks %arg{1}
-  }
-}
+declare-user-mode shfzf
+map global shfzf e ": fzf env<ret>"
+map global shfzf l ": fzf ls<ret>"
+map global shfzf c ": fzf ls cd<ret>: sh-insert-and-send cd %reg{p}<ret>"
+map global shfzf f ": sh-footclient "
+map global shfzf c ": sh-cd "
 
-define-command firefox %{
-	exec "<a-a><a-w>s\b\w+:/(/[^\s(){}\[\]]+)\b<ret>"
-	eval %sh{ firefox --new-tab=$kak_selection }
-}
-
-define-command -params .. \
-    -docstring %{
-        cmd [<arguments>]: run shell command in fifo
-    } cmd %{ evaluate-commands %sh{
-     output=$(mktemp -d "${TMPDIR:-/tmp}"/kak-cmd.XXXXXXXX)/fifo
-     mkfifo ${output}
-     ( { trap - INT QUIT; eval "$@"; } > ${output} 2>&1 & ) > /dev/null 2>&1 < /dev/null
-
-     printf %s\\n "evaluate-commands -try-client '$kak_opt_toolsclient' %{
-               edit! -fifo ${output} -scroll $(basename $(dirname ${output}))
-               set-option buffer filetype sh
-               hook -always -once buffer BufCloseFifo .* %{ nop %sh{ rm -r $(dirname ${output}) } }
-           }"
-}}
+# declare-user-mode rand
+# map global rand f ":echo %val{buffile}"
 
 # HOOKS
 
 lsp-inlay-hints-enable global
-hook global WinSetOption filetype=<language> %{
+hook global	WinSetOption filetype=(c|cpp|cc|h|hh) %{
   hook window -group semantic-tokens BufReload .* lsp-semantic-tokens
-  hook window -group semantic-tokens NormalIdle .* lsp-semantic-tokens
-  hook window -group semantic-tokens InsertIdle .* lsp-semantic-tokens
-  hook -once -always window WinSetOption filetype=.* %{
-    remove-hooks window semantic-tokens
+  hook window -group semantic-tokens NormalIdle	.* lsp-semantic-tokens
+  hook window -group semantic-tokens InsertIdle	.* lsp-semantic-tokens
+  hook -once -always window	WinSetOption filetype=.* %{
+	remove-hooks window	semantic-tokens
   }
 }
 
-# map global insert <tab> '<a-;>:try lsp-snippets-select-next-placeholders catch %{ execute-keys -with-hooks <lt>tab> }<ret>' -docstring 'Select next snippet placeholder'
+# # COMMANDS
+
 define-command phantom-cycle %{
-    # exec ": phantom-selection-add-selection<ret>"
-    evaluate-commands phantom-selection-add-selection
-    debug "added selection"
-    hook -group phantom window RawKey <ret> eval phantom-selection-iterate-next
-    debug "hook"
-    hook window RawKey <esc> %{
-        eval phantom-selection-clear
-        debug "evaled"
-        # exec ": phantom-selection-clear<ret>"
-        remove-hooks window phantom
-    }
+	# exec ": phantom-selection-add-selection<ret>"
+	evaluate-commands phantom-selection-add-selection
+	debug "added selection"
+	hook -group	phantom	window RawKey <ret>	evaluate-commands phantom-selection-iterate-next
+	debug "hook"
+	hook window	RawKey <esc> %{
+		evaluate-commands phantom-selection-clear
+		# exec ": phantom-selection-clear<ret>"
+		remove-hooks window	phantom
+	}
 }
 
-define-command x %{eval "wq"}
-
-
-define-command ide %{
-    rename-client main
-    set global jumpclient main
-
-    new rename-client tools
-    set global toolsclient tools
-
-    new rename-client docs
-    set global docsclient docs
-}
+define-command x %{ evaluate-commands "wq" }
 
 define-command z -params 1 %{ cd %arg{1} }
 complete-command z -menu shell-script-candidates %{ zoxide query -l } 
 
-# FILE
 define-command file -params 1 %{ edit %arg{1} }
 complete-command file -menu shell-script-candidates %{ fd . --type f }
 map global user f ":file "
@@ -297,80 +203,81 @@ map global user k %{ prompt open %{ edit %val{text} } -shell-script-candidates %
 
 # HOP-KAK
 declare-option range-specs hop_ranges
-declare-option str hop_kak_keyset 'tnseriaodhcvgmkxplbfuwyzqj'
-set-face global hop_label_head red,default+F
-set-face global hop_label_tail red,default+F
+declare-option str hop_kak_keyset 'tnseriaodhcv,.gmkxplbfuwyzqj'
+set-face global hop_label_head red,black+F
+set-face global hop_label_tail red,black+F
+# set-face global hop_label_head red,default+F
+# set-face global hop_label_tail red,default+F
 
 map global normal <a-%> ':execute-keys gtGbx<ret>'
+
 define-command hop-kak %{
-  eval -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
+  evaluate-commands -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
 }
+
 define-command -override hop-kak-words %{
-  exec 'gtGbxs\w+<ret>:eval -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }<ret>'
+  evaluate-commands -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
   hook -once -always window RawKey <esc> %{ exec ";," }
+  hook -once -always window ModeChange .*:normal %{ evaluate-commands set-option window scrolloff 10,0 }
 }
-map global normal t :hop-kak-words<ret>
 
-hook global WinSetOption filetype=(man|doc) %{ remove-highlighter window/num-lines }
-hook global WinSetOption filetype=(markdown) %{ add-highlighter window wrap }
-# hook global BufCreate (.*/)?*doc* %{ remove-highlighter window/num-lines }
-# hook global BufCreate .*/ %{debug %val{hook_param}}
+map global normal t ":set-option window scrolloff 0,0<ret>gtGbGls\w+<ret>: hop-kak-words<ret>"
+map global normal T ":set-option window scrolloff 0,0<ret>gtGbGlS\n<ret>: hop-kak-words<ret>"
 
+hook global WinSetOption filetype=(man|doc|shell-session) %{ remove-highlighter window/num-lines }
+hook global WinSetOption filetype=(man|markdown|shell-session) %{ add-highlighter window/ wrap -word }
 
 # HIGHLIGHTERS
+add-highlighter global/ regex \b(TODO|FIXME|XXX|NOTE)\b 0:default+rb
+add-highlighter global/ show-whitespaces -indent '╎' -lf ' ' -spc ' ' -nbsp ' ' -tab '╎' -tabpad ' '
+set-face global MatchingChar cyan,default
+add-highlighter global/ show-matching
 hook global WinCreate .* %{
-  add-highlighter window/num-lines number-lines -hlcursor -separator ' '
-  add-highlighter window/ show-whitespaces -indent '╎' -lf ' ' -spc ' ' -nbsp ' ' -tab '╎' -tabpad ' '
-  add-highlighter window/ show-matching
-  add-highlighter global/ regex \b(TODO|FIXME|XXX|NOTE)\b 0:default+rb
-  add-highlighter window/ dynregex '%reg{/}' 0:+i
+	add-highlighter window/num-lines number-lines -hlcursor -separator ' '
+  # add-highlighter window/ dynregex '%reg{/}' 0:+i
   # add-highlighter window/ regex //\h*(TODO:)[^\n]* 0:cyan 1:yellow,red
   # declare-option line-specs my_flags
   # add-highlighter window/ flag-lines blue my_flags
-}
+# }
 
 # BROWSE COMPLETIONS WITH UP AND DOWN
 hook global InsertCompletionShow .* %{
-    try %{
-        # this command temporarily removes cursors preceded by whitespace;
-        # if there are no cursors left, it raises an error, does not
-        # continue to execute the mapping commands, and the error is eaten
-        # by the `try` command so no warning appears.
-        execute-keys -draft 'h<a-K>\h<ret>'
-        map window insert <down> <c-n>
-        map window insert <up> <c-p>
-        hook -once -always window InsertCompletionHide .* %{
-            unmap window insert <down> <c-n>
-            unmap window insert <up> <c-p>
-        }
-    }
+	try %{
+		# this command temporarily removes cursors preceded by whitespace;
+		# if there are no cursors left, it raises an error, does not
+		# continue to execute the mapping commands, and the error is eaten
+		# by the `try` command so no warning appears.
+		execute-keys -draft 'h<a-K>\h<ret>'
+		map window insert <down> <c-n>
+		map window insert <up> <c-p>
+		hook -once -always window InsertCompletionHide .* %{
+			unmap window insert <down> <c-n>
+			unmap window insert <up> <c-p>
+		}
+	}
 }
 
 
 hook global WinSetOption filetype=(c|cpp) %{
-    clang-enable-autocomplete 
-    clang-enable-diagnostics
-    alias window lint clang-parse
-    alias window lint-next-error clang-diagnostics-next
-    # set-option window lintcmd "clang-tidy"
+	clang-enable-autocomplete 
+	clang-enable-diagnostics
+	alias window lint clang-parse
+	alias window lint-next-error clang-diagnostics-next
 }
 
 
 set-face global CurWord +b
 
-hook global NormalIdle .* %{
-    eval -draft %{ try %{
-        exec ,<a-i>w <a-k>\A\w+\z<ret>
-        add-highlighter -override global/curword regex "\b\Q%val{selection}\E\b" 0:CurWord
-    } catch %{
-        add-highlighter -override global/curword group
-    } }
-}
+# hook global NormalIdle .* %{
+#     evaluate-commands -draft %{ try %{
+#         exec ,<a-i>w <a-k>\A\w+\z<ret>
+#         add-highlighter -override global/curword regex "\b\Q%val{selection}\E\b" 0:CurWord
+#     } catch %{
+#         add-highlighter -override global/curword group
+#     } }
+# }
 
-# Switch cursor color in insert mode
-# ──────────────────────────────────
-
-set-face global InsertCursor black,green
+set-face global InsertCursor black,cyan
 
 hook global ModeChange .*:.*:insert %{
     set-face window PrimaryCursor InsertCursor
@@ -381,14 +288,6 @@ hook global ModeChange .*:insert:.* %{ try %{
     unset-face window PrimaryCursor
     unset-face window PrimaryCursorEol
 } }
-
-map global user -docstring 'next lint error' n ':lint-next-error<ret>'
-map global normal <c-p> :lint<ret>
-
-#map global user -docstring 'gdb helper mode' g ':gdb-helper<ret>'
-#map global user -docstring 'gdb helper mode (repeat)' G ':gdb-helper-repeat<ret>'
-
-map global user -docstring 'lsp mode' l ':enter-user-mode lsp<ret>'
 
 hook global -always BufOpenFifo '\*grep\*' %{ map global normal <minus> ': grep-next-match<ret>' }
 hook global -always BufOpenFifo '\*make\*' %{ map global normal <minus> ': make-next-error<ret>' }
