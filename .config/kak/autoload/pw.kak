@@ -1,21 +1,33 @@
-declare-option int pw_module_id
-
-define-command -params 1 pw-lm %{
-	sh-send "load-module libpipewire-module-filter-chain filter.graph { nodes = [ { type = lv2 name = lv2 plugin = ""%arg{1}"" } ] }"
+define-command -params 1..4 pw-lm %{
+	sh-send "load-module libpipewire-module-filter-chain filter.graph { nodes = [ { type = lv2 name = ""lv2"" plugin = ""%arg{1}"" } ] } capture.props { node.name = ""%arg{4}_in"" target.object = ""%arg{2}"" } playback.props { node.name = ""%arg{4}_out"" target.object = ""%arg{3}"" }"
 }
+
+define-command -params 1 pw-destroy %{
+    sh-send "destroy %arg{1}"
+}
+
+define-command -params 1..2 pw-lm-cmus %{ pw-lm %arg{1} 'C* Music Player' '' %arg{2} }
 
 complete-command pw-lm shell-script-candidates %{ lv2ls }
+complete-command pw-lm-cmus shell-script-candidates %{ lv2ls }
 
-define-command pw-getparams %{
-	execute-keys %{!pw-dump $kak_opt_pw_module_id | jq -c '.[].info.params.Props[]'<ret>}
+define-command -params 1 pw-getparams %{
+	execute-keys "i%arg{1} <esc>!pw-dump %arg{1} | jq -c '.[].info.params.Props[]'<ret>"
+	# execute-keys "i%arg{1}<esc>xS^\s+\K\d+<ret>dx!pw-dump $kak_reg_dot | jq -c '.[].info.params.Props[]'<ret>"
 }
 
-define-command -params 1 pw-setparams %{
-		edit -scratch "pw.%arg{1}"
-		set-option window pw_module_id %arg{1}
-		set-option window filetype json
-		pw-getparams
-		map window user <c> "x!pw-cli set-param $kak_opt_pw_module_id Props $kak_selection >/dev/null <ret>"
+complete-command pw-getparams shell-script-candidates %{ pw-link -iI }
+
+define-command -hidden -params 2 pw-setparam %{
+	execute-keys "!pw-cli set-param %arg{1} Props '%arg{2}' >/dev/null<ret>"
+}
+
+
+define-command pw-setparams %{
+	edit -scratch "*pw-setparams*"
+	set-option window filetype json
+	map window user g ":pw-getparams "
+	map window normal <ret> 'Zxs^(\d+) (.*?)$<ret>:pw-setparam %reg{1} %reg{2}<ret>z'
 }
 
 define-command -params 2 pw-link %{

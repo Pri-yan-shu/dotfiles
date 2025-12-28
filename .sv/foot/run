@@ -1,8 +1,4 @@
 #!/bin/sh
-
-export WAYLAND_DISPLAY=wayland-0
-export LANG=en_US.UTF-8
-export XDG_SESSION_TYPE=wayland
-export DISPLAY=:0
-
+. ~/.env
+. ~/.config/kak/.shrc
 exec foot --server

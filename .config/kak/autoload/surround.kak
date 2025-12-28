@@ -15,8 +15,15 @@ define-command surround-sym %{
 
 define-command surround-delete %{
 	on-key %{
-		execute-keys -draft "<a-a>%val{key}i<del><esc>a<backspace><esc>" 
+		execute-keys "<a-a>%val{key}i<del><esc>a<backspace><esc>" 
 	}
+}
+
+define-command -override -hidden open-pair -params 1 %{
+    try %{
+        execute-keys -draft "<space>;<a-k>\s<ret>"
+        execute-keys "%arg{1}<a-;>h"
+    }
 }
 
 define-command -override -hidden close-pair -params 1 %{

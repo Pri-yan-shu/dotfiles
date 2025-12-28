@@ -1,135 +1,61 @@
 (defcfg
-  ;; ** For Linux **
   input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
   output (uinput-sink "kmonad")
   cmp-seq cmp
-
   fallthrough true
 )
 
 (defsrc
-  tab      q     w     e     r     t     y     u     i     o     p     [     ]     \     
-  caps     a     s     d     f     g     h     j     k     l     ;     '     ret
-  lsft     z     x     c     v     b     n     m     ,     .     /     rsft
-  lctl     lmet  lalt              spc               ralt  rctl
+  tab   q     w     e     r     t     u     i     o     p     [     ]     \
+  caps  a     s     d     f     g     j     k     l     ;     '     ret
+  lsft  z     x     c     v     b     m     ,     .     /     rsft
+  lctl  lmet  lalt              spc               ralt  rctl
 )
 
 (defalias 
-  ls_s (sticky-key 100 lsft)
-  lc_s (sticky-key 200 lctl)
-  la_s (sticky-key 200 lalt)
-  lm_s (sticky-key 200 lmet)
-
-  ealt (tap-next-press A-a lalt)
-  emet (tap-next-press A-r lmet)
-  esft (tap-next-press A-s lsft)
-  ectl (tap-next-press A-t lctl)
-  
-  nalt (tap-next-press C-A-a @la_s)
-  nmet (tap-next-press C-A-r @lm_s)
-  nsft (tap-next-press C-A-s @ls_s)
-  nctl (tap-next-press C-A-t @lc_s)
+  ext  (layer-toggle extend)
+  sym  (tap-next ; (layer-toggle numsym))
+  win  (tap-next KeyZoom met)
+  alto (tap-next KeyOpen alt)
+  esk  (tap-next esc ctl)
+  shit (around-when-alone (sticky-key 75 lsft) (layer-toggle shift))
+  sret (tap-next-press (around lsft ret) @shit)
+  qwer (layer-switch qwerty)
+  cole (layer-switch colemak)
 )
 
-(defalias
-  ext  (layer-toggle extend) ;; Bind 'ext' to the Extend Layer
-  fun  (layer-toggle function) ;; Bind 'fun' to the Function Layer
-  sym  (layer-toggle symbols) ;; Bind 'sym' to Symbols Layer
-  num  (layer-toggle numbers) ;; Bind 'num' to Numbers Layer
-  shit (around-when-alone @ls_s (layer-toggle shift))
-
-  cntb (tap-next-press A-y (layer-toggle control))
-  escb (tap-next-press esc (layer-toggle escape))
-  numb (tap-next-press A-; (layer-toggle numbers))
+(deflayer colemak
+  _     q     w     f     p     b     j     l     u     y     '     _     KeyClose 
+  @esk  a     r     s     t     g     m     n     e     i     o     @win
+  z     x     c     d     v     _     k     h     ,     .     @alto
+  (around met alt) ctl   @ext            @shit             spc   @sym
 )
-
-(defalias
-  v+ VolumeUp
-  v- VolumeDown 
-  v0 Mute
-  b+ BrightnessUp
-  b- BrightnessDown
-)
-
-(deflayer colemak-dh-sp
-  A-]      q     w     f     p     b     [     j     l     u     y     '     \     KeySleep
-  @numb     a     r     s     t     g     ]     m     n     e     i     o     @escb
-  z        x     c     d     v     '     /     k     h     ,     .     @cntb
-  lctl     lalt  @ext              @shit             spc   @sym
-)
-
 
 (deflayer extend
-  A-]      A-q   A-w   A-f   A-p   A-b   _     pgup  home  up    end   _     _     _   
-  A-=      @ealt @emet @esft @ectl A-g   _     pgdn  lft   down  rght  del   _
-  C-z      C-x   C-c   C-d   C-v   _     _     S-tab bks   tab   $     %
-  _        _     _                 ;                 ret   =  
+  _     home  end   pgup  pgdn  _     _     _     _     _     _     _     _
+  _     lft   down  up    rght  _     _     _     _     _     _     _
+  S-tab tab   bks   del   S-ins _     _     _     |     \     _
+  _     _     _                 @sret                 ret   =  
 )
 
-(deflayer function
-  _        _     _     _     _     @b-   _     f12   f7    f8    f9    slck  _     KeyPower
-  _        @la_s @lm_s @ls_s @lc_s @b+   _     f11   f4    f5    f6    _     _
-  @v0      @v-   C-S-c @v+   C-S-v _     _     f10   f1    f2    f3    _
-  _        _     _                 _                 _     _
+(deflayer numsym
+  _     |     @     #     $     %     _     `     &     ^     \     _     KeySleep
+  5     6     7     8     9     !     *     \(    \)    {     }     A-esc
+  0     1     2     3     4     _     ~     [     ]     ?     (around alt KeyOpen) 
+  _     _     /                 -                 _     _
 )
-
-(deflayer symbols
-  _        !     @     #     $     %     «     _     _     _     _     _     _     KeySleep
-  !        @la_s @lm_s @ls_s @lc_s `     »     *     \(    \)    {     }     A-esc
-  ^        ?     \\    |     &     nubs  _     ~     [     ]     `     @ 
-  _        @fun  /                 -                 _     _
-)
-
-(deflayer numbers
-  _        C-A-q C-A-w C-A-f C-A-p C-A-b _     =     7     8     9     =     _     _
-  _        @nalt @nmet @nsft @nctl C-A-g _     *     4     5     6     \_    _
-  A-z      A-x   A-c   A-d   A-v   =     /     0     1     2     3     _
-  _        _     A--               _                 A-spc _
-)
-
-(deflayer escape
-  _        _     _     _     _     _     _     _     M-7 M-8 M-9 M-' _     _
-  _        _     _     _     _     _     _     _     M-4 M-5 M-6 M-o _ 
-  _        _     _     _     _     _     _     M-0 M-1 M-2 M-3 _
-  _        _     _                 _                 _     _    
-)
-
-(deflayer control
-  _        _     _     _     _     _     _     _     M-A-7 M-A-8 M-A-9 M-A-' _     _
-  _        _     _     _     _     _     _     _     M-A-4 M-A-5 M-A-6 M-A-o _ 
-  _        _     _     _     _     _     _     M-A-0 M-A-1 M-A-2 M-A-3 _
-  _        _     _                 _                 _     _    
-)
-
-;;(deflayer control
-;;  _        _     _     _     _     _     _     _     _     A-u   _     _     _     _
-;;  _        _     _     _     _     _     _     _     A-n   A-e   A-i   A-o   _ 
-;;  _        _     _     _     _     _     A-g   A-k   A-h   A-,   A-.   _
-;;  _        _     _                 _                 C-A-k C-A-h
-;;)
 
 (deflayer shift
-  _        _     _     _     _     _     _     _     _     _     _     _     _     _
-  _        _     _     _     _     _     _     _     _     _     _     _     _ 
-  _        _     _     _     _     _     _     _     _     _     _     S-ins
-  _        _     +                 _                 \_    :
+  _     _     _     _     _     _     _     _     _     _     _     _     @qwer
+  _     _     _     _     _     _     _     _     _     _     _     _ 
+  _     _     _     _     _     _     _     _     _     _     _
+  _     _     +                 _                 \_    :
 )
 
-;;(defalias 
-;;  l_qw (layer-switch qwerty-sp)
-;;  l_dh (layer-switch colemak-dh-sp)
-;;)
+(deflayer qwerty
+  _     _     _     _     _     _     _     _     _     _     _     _     _
+  @cole _     _     _     _     _     _     _     _     _     _     _ 
+  _     _     _     _     _     _     _     _     _     _     _
+  _     _     _                 _                 _     _
+)
 
-;;(deflayer qwerty-sp
-;;  _        _     _     _     _     _     _     _     _     _     _     _     _     _
-;;  @num     _     _     _     _     _     _     _     _     _     _     _     _ 
-;;  _        _     _     _     _     _     _     _     _     _     _     _
-;;  _        lalt  @ext              _                 @sym  _
-;;)
-
-;;(deflayer empty
-;;  _        _     _     _     _     _     _     _     _     _     _     _     _     _
-;;  _        _     _     _     _     _     _     _     _     _     _     _     _ 
-;;  _        _     _     _     _     _     _     _     _     _     _     _
-;;  _        _     _                 _                 _     _
-;;)
