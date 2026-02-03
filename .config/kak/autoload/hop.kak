@@ -1,18 +1,20 @@
 declare-option -hidden str hop_pairs
 declare-option -hidden range-specs hop_ranges
 
-evaluate-commands %sh{
-    pairs=$(echo 'tnseriaodhfuwykvplgm' | awk '{ for (i = 1; i <= length($0); i++) for (j = 1; j <= length($0); j++) printf "%s%s ", substr($0, i, 1), substr($0, j, 1); print "" }')
-    echo "set-option global hop_pairs '$pairs'"
+set-option global hop_pairs %sh{
+    echo 'tnseriaodhfuwykvplgmc,x.' | awk '{
+        for (i = 1; i <= length($0); i++)
+            for (j = 1; j <= length($0); j++)
+                printf "%s%s ", substr($0, i, 1), substr($0, j, 1); print "" }'
 }
 
 add-highlighter global/hop-ranges replace-ranges hop_ranges
 
-define-command -params ..1 hop %{
-    set-face buffer PrimaryCursor default,default
-    set-face buffer SecondaryCursor default,default
-    set-face buffer PrimarySelection default,default
-    set-face buffer SecondarySelection default,default
+define-command hop %{
+    set-face window PrimaryCursor default,default
+    set-face window SecondaryCursor default,default
+    set-face window PrimarySelection default,default
+    set-face window SecondarySelection default,default
 
     execute-keys s\w{2,}<ret>
 
@@ -49,14 +51,11 @@ define-command -params ..1 hop %{
 
                 echo "select $range"
             }
-            # remove-highlighter window/hop-ranges
-            set-option window hop_ranges %val{timestamp}
-
-            unset-face buffer PrimarySelection
-            unset-face buffer SecondarySelection
-            unset-face buffer PrimaryCursor
-            unset-face buffer SecondaryCursor
-            try %{ exec %arg{1} }
+            unset-option window hop_ranges
+            unset-face window PrimarySelection
+            unset-face window SecondarySelection
+            unset-face window PrimaryCursor
+            unset-face window SecondaryCursor
         }
     }
 }

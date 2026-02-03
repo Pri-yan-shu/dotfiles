@@ -25,57 +25,18 @@ define-command D -params 1.. %{ evaluate-commands %sh{
         find $dir -type f -maxdepth 1 -exec echo edit {} \; | sort
     done
 }}
-complete-command D file
-# complete-command D -menu file
+# complete-command D file
+complete-command D -menu file
 
-define-command hop-kak %{
-    evaluate-commands -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
-}
-
-define-command hop-sel %{
-    set-face buffer PrimaryCursor Default
-    set-face buffer SecondaryCursor Default
-    set-face buffer PrimarySelection default,default
-    set-face buffer SecondarySelection default,default
-    hop
-    hook -once -always window RawKey <esc> %{ exec ";," }
-    hook -once -always window ModeChange .*:normal %{
-        unset-face buffer PrimarySelection
-        unset-face buffer SecondarySelection
-        unset-face buffer PrimaryCursor
-        unset-face buffer SecondaryCursor
-    }
-}
-
-define-command -override hop-kak-words %{
-    set-face buffer PrimarySelection default,default
-    set-face buffer SecondarySelection default,default
-    evaluate-commands -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
-    hook -once -always window RawKey <esc> %{ exec ";," }
-    hook -once -always window ModeChange .*:normal %{
-        set-face buffer PrimarySelection PrimarySelection
-        set-face buffer SecondarySelection SecondarySelection
-    }
-}
-
-define-command hop-kak-sel %{
-  evaluate-commands -no-hooks -- %sh{ hop-kak --keyset "$kak_opt_hop_kak_keyset" --sels "$kak_selections_desc" }
-  hook -once -always window RawKey <esc> %{ exec ";," }
-  # hook -once -always window ModeChange .*:normal %{ execute-keys <a-z>a }
-}
-
-# define-command -params 1.. fzf %{
-# 	prompt -shell-script-candidates "%arg{1}" "%arg{2}: " %{
-# 		set-register p %val{text}
-# 	}
-# }
-
-define-command firefox %{
+define-command firefox-tab %{
 	exec "<a-a><a-w>s\b\w+:/(/[^\s(){}\[\]]+)\b<ret>"
 	evaluate-commands %sh{ firefox --new-tab=$kak_selection }
 }
 
-# define-command mkdir %{ nop %sh{ mkdir -p $(dirname $kak_buffile) } }
+define-command firefox-window %{
+	exec "<a-a><a-w>s\b\w+:/(/[^\s(){}\[\]]+)\b<ret>"
+	evaluate-commands %sh{ firefox --new-tab=$kak_selection }
+}
 
 define-command delete-buffers-matching -params 1 %{
     evaluate-commands -buffer * %{
@@ -154,9 +115,6 @@ define-command -params 1 pandoc-web %{
 	edit /tmp/tmp
 }
 
-define-command git-stage-selection %{}
-define-command git-unstage-selection %{}
-
 define-command -params 1 mark-location %{
     prompt 'note:' %{
     	nop %sh{
@@ -165,18 +123,11 @@ define-command -params 1 mark-location %{
     }
 }
 
-define-command colorschemes %{
-    edit -scratch *colors*
-    exec %{!find -L "${kak_runtime}/colors" "${kak_config}/colors" -type f -name '*\.kak' | while read -r filename; do; basename="${filename##*/}"; printf %s\\n "${basename%.*}"; done | sort -u<ret>}
-
-    map buffer normal <ret> "xs\n<ret>: colorscheme %reg{.}<ret>"
-    map buffer normal l "<up>xs\n<ret>: colorscheme %reg{.}<ret>"
-    map buffer normal u "<down>xs\n<ret>: colorscheme %reg{.}<ret>"
-}
-
 define-command lsp-enable-wrapper %{
     lsp-enable
     lsp-inlay-diagnostics-enable global
+    lsp-inlay-hints-enable global
+    lsp-diagnostic-lines-disable global
     lsp-auto-signature-help-disable
     lsp-semantic-tokens
 }
@@ -200,15 +151,18 @@ define-command -params 1 link %{
     }
 }
 
-define-command -params 1 goto %{
-    exec "%sh{echo $(($1*$kak_buf_line_count/$kak_window_width))}g"
-}
-
 define-command toggle-warp %{
     try %{
         remove-highlighter buffer/wrap
     } catch %{
         add-highlighter buffer/wrap wrap -word
+    }
+}
+define-command -params 1 toggle-warp-width %{
+    try %{
+        remove-highlighter buffer/wrap
+    } catch %{
+        add-highlighter buffer/wrap wrap -word -width %arg{1}
     }
 }
 
@@ -235,12 +189,19 @@ define-command -override context-replace %{
 }
 
 define-command -params 1.. cflow %{
-    e -scratch *cflow*
-    execute-keys {!cflow %arg{@}<ret>}
+    edit -scratch *cflow*
+    execute-keys %exp{!cflow %arg{@}<ret>}
+    # add-highlighter buffer/cflow regex \(
 }
 
 complete-command cflow file
 
 define-command -params 1.. prg %{
     nop %sh{ %arg{@} >/dev/null 2>&1 }
+}
+
+define-command colorschemes %{
+    edit -scratch *colorschemes*
+    execute-keys '!find -L "${kak_runtime}/colors" "${kak_config}/colors" -type f -name ''*\.kak''<ret>'
+    map buffer normal <ret> 'x_:source %reg{.}<ret>j'
 }

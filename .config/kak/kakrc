@@ -1,6 +1,8 @@
-require-module fast-context
+require-module dwl
+# colorscheme ts-catppuccin_mocha
+# eval %sh{ kak-tree-sitter --with-text-objects --with-highlighting -dks --init $kak_session }
 colorscheme ayu-evo
-set-option global ui_options terminal_assistant=none terminal_enable_mouse=true terminal_status_on_top=true terminal_synchronized=true terminal_info_max_width=80 terminal_padding_char=  
+set-option global ui_options terminal_assistant=none terminal_enable_mouse=true terminal_status_on_top=true terminal_synchronized=true terminal_info_max_width=80 terminal_padding_char=
 set-option global matching_pairs ( ) { } [ ]
 set-option global tabstop 4
 set-option global indentwidth 4
@@ -8,6 +10,8 @@ set-option global grepcmd 'rg --column'
 set-option global startup_info_version 20350518
 set-option global autoinfo command
 set-option global jumpclient client0
+set-option global makecmd 'make -j8'
+set-option global termcmd "footclientappid sh -c"
 
 set-face global InsertCursor black,green
 set-face global NormalModeCursor black,red
@@ -46,53 +50,20 @@ map global normal <c-up> '|printf "%d\n" $(($kak_selection + 1))<ret>'
 map global normal <c-down> '|printf "%d\n" $(($kak_selection - 1))<ret>'
 map global normal @ 's^\s+<ret>@'
 map global normal <a-@> 's^\s+<ret><a-@>'
-map global normal j ':enter-user-mode j<ret>'
 map global normal <a-Q> Q
 map global normal <a-q> q
 map global normal <c-a> <c-o>
 map global normal <c-r> <c-i>
 map global normal <a-i> '<a-t> ;i'
 map global normal <a-a> 'f ;i'
+# map global normal = ':prompt math: %{exec "a%val{text}<lt>esc>|bc<lt>ret>"}<ret>'
+map global normal <ret> 'x_:<c-r>.<ret>'
+map global normal = 'x_<a-!>%val{selections}<a-!>'
 
-map global user c ':fifo '
-map global user C ':e -scratch *cflow*<ret>!cflow '
-map global user d ':doc '
-map global user f ':f '
-map global user F ':format<ret>'
-map global user n ':new<ret>'
-map global user m ':man '
-map global user M ':w<ret>:make<ret>'
 # map global user M ':mark-location %val{config}/marks<ret>'
 # map global user r ':rss ~/.rss/'
-map global user r ':enter-user-mode replace-ranges<ret>'
-map global user s ':enter-user-mode shell<ret>'
-map global user u ':firefox<ret>'
-map global user w ':w<ret>'
-map global user W ':format<ret>:w<ret>'
-map global user <a-w> ':toggle-warp<ret>'
-map global user q ':q<ret>'
-map global user Q ':q!<ret>'
-map global user x ':waq<ret>'
-map global user z ':z '
-map global user / ':enter-user-mode rg<ret>'
-map global user <ret> 'x:<c-r>.<ret>'
-map global user , ':focus-toggle<ret>'
-map global user <a-p> '<a-p>i<ret><esc><a-s>'
-
-map global lsp G ':ctags-generate<ret>'
-map global lsp g ':ctags-generate<ret>'
-map global lsp b ':ctags-complete<ret>'
-map global lsp t ':ctags-search '
-map global lsp T '<a-i>w:ctags-search %reg{.}<ret>'
-map global lsp m '<a-i>w:ctags-funcinfo<ret>'
-
-map global user y '<a-|>wl-copy<ret>' -docstring 'clipboard'
-map global user Y '<a-|>wl-copy -p<ret>' -docstring 'clipboard'
-map global user p '<a-!>wl-paste -n<ret>' -docstring 'clipboard'
-map global user P '!wl-paste -n<ret>' -docstring 'clipboard'
-map global user <a-p> '<a-!>wl-paste -np<ret>' -docstring 'clipboard'
-map global user <a-P> '!wl-paste -np<ret>' -docstring 'clipboard'
-
+map global normal <'>  ':surround-sym<ret>'
+map global normal <"> ':surround-delete<ret>'
 map global user ( ':surround-nest ( )<ret>'
 map global user { ':surround-nest { }<ret>'
 map global user [ ':surround-nest [ ]<ret>'
@@ -101,8 +72,37 @@ map global user ) ':surround-delete<ret>)'
 map global user } ':surround-delete<ret>}'
 map global user ] ':surround-delete<ret>]'
 map global user > ':surround-delete<ret>>'
-map global normal <'>  ':surround-sym<ret>'
-map global normal <"> ':surround-delete<ret>'
+
+map global user b ':b '
+map global user c ':fifo '
+map global user C ':e -scratch *cflow*<ret>!cflow '
+map global user d ':doc '
+map global user f ':f '
+map global user F ':format<ret>'
+map global user n ':new<ret>'
+map global user m ':man '
+map global user M ':w<ret>:make<ret>'
+map global user l :find-buf<ret>
+map global user u ':firefox-tab<ret>'
+map global user U ':firefox-window<ret>'
+map global user w ':w<ret>'
+map global user W ':format<ret>:w<ret>'
+map global user <a-w> ':toggle-warp<ret>'
+map global user <a-W> ':toggle-warp-width %val{count}<ret>'
+map global user q ':q<ret>'
+map global user Q ':q!<ret>'
+map global user x ':waq<ret>'
+map global user z ':z '
+map global user <ret> 'x:<c-r>.<ret>'
+map global user , ':focus-toggle<ret>'
+map global user <a-p> '<a-p>i<ret><esc><a-s>'
+
+map global user y '<a-|>wl-copy<ret>'
+map global user Y '<a-|>wl-copy -p<ret>'
+map global user p '!wl-paste -n<ret>'
+map global user P '<a-!>wl-paste -n<ret>'
+map global user <a-p> '!wl-paste -np<ret>'
+map global user <a-P> '<a-!>wl-paste -np<ret>'
 
 map global prompt <up> <s-tab>
 map global prompt <down> <tab>
@@ -129,10 +129,10 @@ map global insert <'> "''<left>"
 map global insert <"> '""<left>'
 
 map global insert <a-esc> '<a-;>:db<ret>'
-map global insert <s-left> '<a-;><s-left>'
-map global insert <s-right> '<a-;><s-right>'
-map global insert <s-up> '<a-;><s-up>'
-map global insert <s-down> '<a-;><s-down>'
+map global insert <s-left> '<a-;>H'
+map global insert <s-right> '<a-;>L'
+map global insert <s-up> '<a-;>K'
+map global insert <s-down> '<a-;>J'
 map global insert <a-b> '<a-;>b'
 map global insert <a-w> '<a-;>w'
 map global insert <a-B> '<a-;>B'
@@ -149,6 +149,8 @@ map global insert <c-d> '<a-;>:comment-line<ret>'
 map global insert <c-o> '<esc>z)Z,i'
 map global insert <c-i> '<esc>z(Z,i'
 map global insert <c-t> <c-n>
+map global insert <a-p> <a-semicolon><a-p>
+map global insert <a-P> <a-semicolon><a-P>
 
 map global goto , '<esc>:jump-anywhere<ret>'
 map global goto E '<esc>:lsp-find-error<ret>'
@@ -160,6 +162,7 @@ map global object v w
 map global object V <a-w>
 map global object b <esc><a-a>Bx
 
+declare-user-mode useruser
 map global user <space> ':enter-user-mode useruser<ret>'
 map global useruser v ':echo %val{}<left>'
 map global useruser o ':echo %opt{}<left>'
@@ -168,7 +171,10 @@ map global useruser O ':reg a %opt{}<left>'
 map global useruser b ':echo %val{buffile}<ret>'
 map global useruser s ':echo %sh{}<left>'
 map global useruser r ':source "%val{config}/kakrc"<ret>'
+map global useruser p ':echo "%val{cursor_line}/%val{buf_line_count}"<ret>'
+map global useruser e ':e %val{buffile}<a-!>'
 
+declare-user-mode edit
 map global user e ':enter-user-mode edit<ret>'
 map global edit c ':edit ~/.config/kak/kakrc<ret>'
 map global edit d ':b *debug*<ret>'
@@ -177,18 +183,20 @@ map global edit n ':edit ~/devel/wip/notes/'
 map global edit s ':edit -scratch<ret>'
 map global edit h ':edit ~/.sh_history<ret>'
 
+declare-user-mode shell
+map global user s ':enter-user-mode shell<ret>'
 map global shell d ":sh-spawn env ENV=%val{config}/.shrc dash -i +m<ret>"
 map global shell f ":sh-file "
-# map global shell r ":sh-spawn /usr/lib/plan9/bin/rc -i<ret>:sh-send . %val{config}/.rcrc<ret>"
-map global shell r ":sh-spawn /usr/lib/plan9/bin/rc -i -l<ret>"
+map global shell r ":sh-spawn /usr/lib/plan9/bin/rc -i<ret>:sh-send . %val{config}/.rcrc<ret>"
 map global shell p ":sh-spawn pw-cli<ret>"
-map global shell P ":sh-spawn env PYTHONSTARTUP=%val{config}/.pythonrc.py python -i<ret>"
-map global shell <a-P> ":sh-spawn env PYTHONSTARTUP=%val{config}/.pythonrc.py python -i<ret>:set-option global sh_fifo %opt{sh_fifo}<ret>"
+map global shell P ":sh-spawn env PYTHONSTARTUP=%val{config}/.pythonrc python -i<ret>"
+map global shell <a-P> ":sh-spawn env PYTHONSTARTUP=%val{config}/.pythonrc python -i<ret>:set-option global sh_fifo %opt{sh_fifo}<ret>"
 map global shell n ':sh-new-in %opt{sh_fifo} %opt{sh_pid}<ret>'
 map global shell c "!pkill --parent $kak_opt_sh_pid >/dev/null 2>&1<ret>"
 map global shell C "!pkill --parent $kak_opt_sh_pid --signal SIGKILL<ret>"
 map global shell e 'xS\n<ret>:sh-send printf "e $PWD/%%reg{.}\n" | kak -p $kak_session'
 
+declare-user-mode snippets
 map global insert <c-e> '<a-;>:enter-user-mode snippets<ret>'
 map global snippets c ':snippets class<ret>)Z,'
 map global snippets f ':snippets function<ret>)Z,'
@@ -203,6 +211,7 @@ map global snippets t ':snippets test<ret>)Z,'
 map global snippets w ':snippets while<ret>)Z,'
 map global snippets p ':snippets print<ret>)Z,'
 
+declare-user-mode rg
 map global normal r ':enter-user-mode rg<ret>'
 map global rg p ':prompt text: %{ reg r %val{text}; exec '':rg '' }<ret>'
 map global rg l '<a-i>w:reg r "%reg{.} ="<ret>:rg '
@@ -211,14 +220,15 @@ map global rg r '<a-i>w:reg r "=.*?%reg{.}."<ret>:rg '
 map global rg . ':reg r %reg{.}<ret>:rg '
 map global rg <"> ':reg r %reg{"}<ret>:rg '
 map global rg , ':reg r ^[^\s].*?%reg{.}<a-!><ret>:rg '
-map global rg / ':reg r %reg{/}<ret>:rg '
+map global rg / ':reg r %reg{/}<a-!><ret>:rg '
 map global rg > ':reg r %reg{.}<ret>:rg '
 
-map global rg <space> ':ctags-generate<ret>'
-map global rg u ':ctags-update-tags<ret>'
-map global rg c '<a-i>w:ctags-search<ret>'
-map global rg C ':ctags-search <ret>'
-map global rg f '<a-i>w:ctags-funcinfo<ret>'
+map global rg G ':ctags-generate<ret>'
+map global rg g ':ctags-update-tags<ret>'
+map global rg b ':ctags-complete<ret>'
+map global rg t ':ctags-search '
+map global rg T '<a-i>w:ctags-search %reg{.}<ret>'
+map global rg m '<a-i>w:ctags-funcinfo<ret>'
 
 map global lsp <space> ':lsp-enable-wrapper<ret>'
 map global object a '<a-;>lsp-object<ret>' -docstring 'LSP any symbol'
@@ -228,3 +238,34 @@ map global object t '<a-;>lsp-object Class Interface Struct<ret>' -docstring 'LS
 map global object d '<a-;>lsp-diagnostic-object --include-warnings<ret>' -docstring 'LSP errors and warnings'
 map global object D '<a-;>lsp-diagnostic-object<ret>' -docstring 'LSP errors'
 
+hook global BufSetOption filetype=(man|markdown|shell|make) %{ add-highlighter buffer/wrap wrap -word }
+hook global BufCreate .*\.smd %{ set-option buffer filetype markdown }
+
+hook global ModeChange .*:.*:insert %{
+    set-face window PrimaryCursor InsertCursor
+    set-face window PrimaryCursorEol InsertCursor
+}
+
+hook global ModeChange .*:insert:.* %{ try %{
+    unset-face window PrimaryCursor
+    unset-face window PrimaryCursorEol
+}}
+
+hook global ModeChange .*:normal:next-key.* %{
+    set-face window PrimaryCursor NormalModeCursor
+    set-face window PrimaryCursorEol NormalModeCursor
+}
+
+hook global ModeChange .*:next-key.*:normal %{ try %{
+    unset-face window PrimaryCursor
+    unset-face window PrimaryCursorEol
+}}
+
+hook global BufSetOption filetype=(grep|lsp-goto) %{
+	hook buffer -group mouse NormalKey <mouse:press:left:.*> jump
+    hook -once -always window WinSetOption filetype=.* %{ remove-hooks buffer mouse }
+}
+
+hook -once global KakBegin .* %{ set global jumpclient client0 }
+
+autorestore-disable

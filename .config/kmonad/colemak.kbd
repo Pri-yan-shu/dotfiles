@@ -22,10 +22,11 @@
   sret (tap-next-press (around lsft ret) @shit)
   qwer (layer-switch qwerty)
   cole (layer-switch colemak)
+  sush (around met lsft)
 )
 
 (deflayer colemak
-  _     q     w     f     p     b     j     l     u     y     '     _     KeyClose 
+  _     q     w     f     p     b     j     l     u     y     '     @sush KeyClose 
   @esk  a     r     s     t     g     m     n     e     i     o     @win
   z     x     c     d     v     _     k     h     ,     .     @alto
   (around met alt) ctl   @ext            @shit             spc   @sym

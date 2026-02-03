@@ -12,11 +12,20 @@ complete-command pw-lm shell-script-candidates %{ lv2ls }
 complete-command pw-lm-cmus shell-script-candidates %{ lv2ls }
 
 define-command -params 1 pw-getparams %{
-	execute-keys "i%arg{1} <esc>!pw-dump %arg{1} | jq -c '.[].info.params.Props[]'<ret>"
-	# execute-keys "i%arg{1}<esc>xS^\s+\K\d+<ret>dx!pw-dump $kak_reg_dot | jq -c '.[].info.params.Props[]'<ret>"
+    reg r %sh{
+        pw-dump | jq -r ".[] | select(.info.props[\"media.class\"] == \"$1\") | \"(.id)\""
+    }
+	execute-keys "i%reg{r} <esc>!pw-dump %reg{r} | jq -c '.[].info.params.Props.[1]'<ret>"
 }
 
-complete-command pw-getparams shell-script-candidates %{ pw-link -iI }
+complete-command pw-getparams shell-script-candidates %{
+    pw-dump | jq -r '.[] | select(
+        .type=="PipeWire:Interface:Node"
+        and (.info["n-input-ports"] > 0)
+        and (.info.props["media.class"]
+        | contains("Audio"))
+    ) | "\(.info.props["node.name"])"'
+}
 
 define-command -hidden -params 2 pw-setparam %{
 	execute-keys "!pw-cli set-param %arg{1} Props '%arg{2}' >/dev/null<ret>"
@@ -26,7 +35,7 @@ define-command -hidden -params 2 pw-setparam %{
 define-command pw-setparams %{
 	edit -scratch "*pw-setparams*"
 	set-option window filetype json
-	map window user g ":pw-getparams "
+	map window normal l ':pw-getparams %val{count}<ret>'
 	map window normal <ret> 'Zxs^(\d+) (.*?)$<ret>:pw-setparam %reg{1} %reg{2}<ret>z'
 }
 

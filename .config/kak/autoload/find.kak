@@ -1,7 +1,4 @@
-declare-option str-list find_marks
 declare-option int find_depth 1
-
-map global user l :find-buf<ret>
 
 define-command find %{
     execute-keys "%%d!find -maxdepth %opt{find_depth} -printf '%%P\n' | sort<ret>ggd"
@@ -13,21 +10,16 @@ define-command find-buf %{
     find
 }
 
-# symlinks
-
 define-command find-enter %{
     evaluate-commands %sh{
         eval set -- "$kak_quoted_selections"
 
         case $(file -Lb --mime-type -- "$@") in
         inode/directory)
-        	echo "cd $1"
+        	printf "cd '$1'\n"
     	;;
-        application/vnd.microsoft.portable-executable)
-            env -u DISPLAY ~/.local/wine/bin/wine "$@"
-        ;;
         text/*)
-        	printf "eval -try-client %%opt{jumpclient} %%{e $kak_selections}\n"
+        	printf "eval -try-client %%opt{jumpclient} %%{e $kak_quoted_selections; focus}\n"
         ;;
         image/*)
         	swayimg "$@" >/dev/null 2>&1 &
@@ -44,6 +36,9 @@ define-command find-enter %{
         application/x-pie-executable)
         	"$@" >/dev/null 2>&1 &
         ;;
+        application/vnd.microsoft.portable-executable)
+            env -u DISPLAY ~/.local/wine/bin/wine "$@"
+        ;;
     	*)
         	xdg-open -- "$@" >/dev/null 2>&1 &
         ;;
@@ -52,73 +47,49 @@ define-command find-enter %{
 }
 
 define-command find-chmod %{
-    reg a %reg{.}
-    execute-keys 'xs^[\w-]([\w-]{3})([\w-]{3})([\w-]{3})<ret>'
-    nop %sh{
-        chmod u=$kak_reg_1,g=$kak_reg_2,o=$kak_reg_3 "$kak_reg_a"
-    }
-}
-
-define-command find-mark %{
-    try %{
-        # add-highlighter buffer/
-    } catch %{
-    }
-    set-option -add buffer find_marks 
-    hook -always -once buffer NormalKey <esc> %{
-        unset-option buffer find_marks
-        rmhl buffer/find_marks
-    }
-}
-
-define-command find-move %{
-    execute-keys -draft %{x_:reg a %reg{.}<ret>}
-    execute-keys i
-    hook -always -once -group find-move buffer InsertKey <esc> %{
-        execute-keys x_
+    reg f %reg{.}
+    prompt -init %sh{stat $kak_selection --format %a} permissions: %{
         nop %sh{
-            dirname=$(dirname "$kak_selection")
-            if ! [ -d $dirname ]
-            then
-            	if [ -e $dirname ]
-            	then
-            		exit
-            	else
-            		mkdir -p $dirname
-            	fi
-            fi
-
-
-            mv "$kak_reg_a" "$kak_selection"
+            chmod $kak_text "$kak_selection"
         }
-        # remove-hooks buffer find-move
     }
-
-    # hook -always -once -group find-move buffer InsertKey <esc> %{
-    #     remove-hooks buffer find-move
-    # }
 }
+
+define-command -params 2..3 find-cmd %{
+    prompt -file-completion %arg{1} %{
+        nop %sh{ $2 -- "$3" $kak_text || printf "fail command failed:$?" }
+        find
+    }
+}
+
+define-command -params 1 find-mv %{
+    nop %sh{
+        mv -- $kak_quoted_selections $1 || printf "mv failed: $?"
+        find
+    }
+}
+
+complete-command find-mv file
 
 hook global BufSetOption filetype=find %{
-    # add-highlighter buffer/find-flags flag-lines red find_flags
-    # map buffer normal p 'x_:find-chmod<ret>'
-    map buffer normal c 'x_:find-rename<ret>'
-    map buffer normal d 'x_:nop %sh{rm $kak_reg_dot}<ret>xd'
-    map buffer normal <a-d> 'x_:nop %sh{rm -r $kak_reg_dot}<ret>xd'
+    map buffer normal D 'x_:nop %sh{rm -- $kak_selections}<ret>:find<ret>'
+    map buffer normal <a-d> 'x_:nop %sh{rm -r -- $kak_selections}<ret>:find<ret>'
     map buffer normal <ret> 'x_:find-enter<ret>'
-    map buffer normal <s-ret> 'x_<a-!>find <c-r>. -maxdepth 1 -mindepth 1 -printf ''\n%p''<ret>;' # sort inserts ugly \n in end
-    map buffer normal o ':prompt dir: %{nop %sh{mkdir $kak_text}; find}<ret>'
-    map buffer normal i ':prompt file: %{nop %sh{touch $kak_text}; find}<ret>'
-    map buffer normal f ':prompt file: %{nop %sh{mkfifo $kak_text}; find}<ret>'
-    map buffer normal p 'x_y;I<c-x>f:nop %sh{cp }'
-    map buffer normal x ':find-mark<ret>'
-    map buffer normal l ':set-option buffer find_depth %val{count}<ret>:find<ret>'
+    map buffer normal <s-ret> 'x_<a-!>find "$kak_selection" -maxdepth 1 -mindepth 1 -printf ''\n%p''<ret>;' # sort inserts ugly \n in end
+    map buffer normal o ':find-cmd dir: "mkdir -p"<ret>'
+    map buffer normal i ':find-cmd file: touch<ret>'
+    map buffer normal f ':find-cmd fifo: mkfifo<ret>'
+    map buffer normal p 'x_:find-cmd copy: cp<ret>'
+    map buffer normal s 'x_:find-cmd link: "ln -s" $PWD/$kak_selection<ret>'
+    map buffer normal c 'x_:find-mv '
+    # map buffer normal c 'x_:find-cmd move: mv "%val{selections}"<ret>'
+    map buffer normal L 'x_:echo "%sh{ls -l $kak_selection}"<ret>'
+    map buffer normal x 'x_<a-z>aZ,;'
+    map buffer normal l ':set-option buffer find_depth %sh{printf $(($kak_count + 1))}<ret>:find<ret>'
     map buffer normal b ':cd ..<ret>'
-    map buffer normal r ':find-move<ret>'
+    map buffer normal m 'x_:find-chmod<ret>'
     map buffer goto h '<esc>:cd<ret>:find<ret>'
     map buffer goto r '<esc>:cd /<ret>:find<ret>'
-    # define-command -override z -params 1 %{ cd %arg{1}; find }
-    # complete-command z -menu shell-script-candidates %{ zoxide query -l }
 
     hook -always global EnterDirectory .* %{
         edit -scratch *find*

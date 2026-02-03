@@ -1,10 +1,9 @@
 declare-option str sh_fifo
-declare-option str sh_pwd
+# declare-option str sh_pwd
 declare-option str sh_pid
-declare-option str-list sh_exe
 
 define-command -params 1.. sh-spawn %{
-    nop %sh{
+    evaluate-commands %sh{
         export kak_session
         export kak_client
         export TERM=dumb
@@ -13,18 +12,17 @@ define-command -params 1.. sh-spawn %{
         mkfifo $sh_fifo/in $sh_fifo/out
 
         exec 3<>$sh_fifo/in
+        exec 4<>$sh_fifo/out
 
-        setsid $@ >$sh_fifo/out <$sh_fifo/in 2>&1 &
+        setsid $@ >&4 <&3 2>&1 &
 
-        printf "edit -fifo $sh_fifo/out -scroll $!
+        printf "edit -fifo $sh_fifo/out -scroll '$!:${PWD##*/}'
                 set-option buffer sh_pid $!
-                set-option buffer sh_fifo $sh_fifo
-                " > $kak_command_fifo
+                set-option buffer sh_fifo $sh_fifo\n"
     }
 
     hook -once -always buffer BufCloseFifo .* %{
         evaluate-commands %sh{
-            echo "echo -debug sh_fifo: $kak_opt_sh_fifo sh_pid: $kak_opt_sh_pid"
             rm -r $kak_opt_sh_fifo
             kill -s 9 $kak_opt_sh_pid
         }
@@ -44,6 +42,7 @@ complete-command sh-file file
 define-command -params 1.. sh-send %{
     echo -end-of-line -to-file "%opt{sh_fifo}/in" %arg{@}
 }
+
 
 provide-module shell %§
 
@@ -73,45 +72,52 @@ define-command -params 2 sh-new-in %{
     set-option buffer filetype dash
 }
 
-define-command -params 1 sh-cd %{
-    set-option buffer path %sh{ realpath -e $kak_opt_sh_pwd/$1 }
-    set-option buffer sh_pwd %opt{path}
-    sh-send cd ""%opt{path}""
-    rename-buffer "$%sh{basename ""$1""}"
+define-command -params 2 sh-cd %{
+    rename-buffer %arg{1}
+    set-option buffer path %arg{2}
     modeline
 }
 
-complete-command -menu sh-cd shell-script-candidates %{ ls $kak_opt_sh_pwd }
-
 define-command -params 1 sh-z %{
-    sh-send "cd '%arg{1}'"
-    rename-buffer "$%sh{basename ""$1""}"
-    set-option buffer path %arg{1}
-    set-option buffer sh_pwd %arg{1}
-    modeline
+    sh-send t %arg{1}
 }
 complete-command -menu sh-z shell-script-candidates %{ zoxide query --list }
 
 §
 
-evaluate-commands %sh{
-    executables=$({ IFS=:; find -L /usr/bin/ /usr/local/bin/ $HOME/.local/bin/ -maxdepth 1 -type f -printf "%f\n" 2>/dev/null; } | sort | sed 's/[][\/.^$*+?()|{}]/\\&/g' | paste -sd "|")
-    printf 'add-highlighter shared/shellexe regex (^|\\s)(?:%s)\\s 0:keyword\n' "$executables"
+define-command -params 1.. sh-sudo %{
+    prompt -password 'Password:' %{
+        reg f %opt{sh_fifo}
+        edit -scratch '*sudo-password-tmp*'
+        reg '"' "%val{text}"
+        exec <a-P>
+        nop %sh{
+            if sudo -n true > /dev/null 2>&1; then
+                sudo -n -- $@ > $kak_reg_f/out 2>&1
+            else
+            	printf 'exec %s\n' "'|sudo -S -- $@ > $kak_reg_f/out<ret>'" > $kak_command_fifo
+            fi
+        }
+        delete-buffer! '*sudo-password-tmp*'
+    }
 }
 
-map global lsp l "!find -maxdepth 1 . "
+# evaluate-commands %sh{
+#     executables=$({ IFS=:; find -L /usr/bin/ /usr/local/bin/ $HOME/.local/bin/ -maxdepth 1 -type f -printf "%f\n" 2>/dev/null; } | sort | sed 's/[][\/.^$*+?()|{}]/\\&/g' | paste -sd "|")
+#     printf 'add-highlighter shared/shellexe regex ^(?:%s)\\s 0:keyword\n' "$executables"
+# }
+
+# map global lsp l "!find -maxdepth 1 . "
 map global lsp c ":sh-cd "
 map global lsp z ":sh-z "
-map global lsp n ":sh-send nnn -e"
 
 hook global WinSetOption filetype=shell %{
     require-module shell
-    map window normal V '<a-i><a-w>:enter-user-mode sh-plumb<ret>'
     map window normal <ret> 'Z:eval -itersel %{mulsel sh-send}<ret>'
     map window insert <ret> '<esc>Zx:sh-send %reg{.}<ret>o'
     map window normal <a-ret> 'Z:mulsel sh-send<ret>jxGedo<esc>'
     map window insert <a-ret> '<esc>Zx:sh-send %reg{.}<ret>jxGedo<esc>'
-    map window insert <c-ret> <ret>
+    map window insert <s-ret> <ret>
     map window normal = '<a-i>w<a-Z>a'
     map window user l  ":sh-send ls<ret>"
 

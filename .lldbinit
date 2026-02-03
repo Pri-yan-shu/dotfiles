@@ -1,13 +1,14 @@
 plugin load ~/devel/wip/kak-lldb/kak-lldb.so
 
-settings set -f frame-format "{{${function.name-with-args} ${module.file.basename}{${frame.no-debug}}}}{ ${function.is-optimized} [opt]}{ ${frame.is-artificial} [artificial]}{ ${line.file.fullpath}:${line.number}{:${line.column}}}\n"
-settings set -f frame-format-unique "{{${function.name-without-args} ${module.file.basename}{${frame.no-debug}}}}{ ${function.is-optimized} [opt]}{ ${frame.is-artificial} [artificial]}{ ${line.file.fullpath}:${line.number}{:${line.column}}}\n"
-settings set -f prompt " "
 settings set -f prompt-ansi-prefix ""
 settings set -f prompt-ansi-suffix ""
-settings set -f stop-line-count-after 0
-settings set -f stop-line-count-before 0
-settings set -f symbols.enable-lldb-index-cache true
-settings set -f interpreter.echo-commands false
-settings set -f escape-non-printables false
-settings set target.import-std-module true
+settings set frame-format "{{${function.name-with-args} ${module.file.basename}{${frame.no-debug}}}}{ ${function.is-optimized} [opt]}{ ${frame.is-artificial} [artificial]}{ ${line.file.fullpath}:${line.number}{:${line.column}}}\n"
+settings set frame-format-unique "{{${function.name-without-args} ${module.file.basename}{${frame.no-debug}}}}{ ${function.is-optimized} [opt]}{ ${frame.is-artificial} [artificial]}{ ${line.file.fullpath}:${line.number}{:${line.column}}}\n"
+settings set prompt " "
+settings set stop-line-count-after 0
+settings set stop-line-count-before 0
+settings set symbols.enable-lldb-index-cache true
+settings set interpreter.echo-commands false
+settings set target.skip-prologue true
+settings set target.process.optimization-warnings true
+# settings set target.import-std-module true
